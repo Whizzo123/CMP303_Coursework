@@ -1,7 +1,8 @@
-﻿  NetworkObject.cpp
+﻿  MSocket.cpp
   Generating code
-  Previous IPDB was built with incompatible compiler, fall back to full compilation.
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\Slot.cpp(160): warning C4715: 'Slot::isItemCompatable': not all control paths return a value
-  All 1375 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.cpp(32): warning C4715: 'NetworkingManager::StartClient': not all control paths return a value
+  3 of 1393 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
-  CMP105App.vcxproj -> C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\x64\Release\CMP105App.exe
+  CMP105App.vcxproj -> C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\x64\Release\CMP303_App.exe
