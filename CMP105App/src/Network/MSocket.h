@@ -13,6 +13,8 @@ public:
 	bool recieve();
 	bool send(std::string data);
 	sf::TcpSocket* getSFMLSocket();
+	char* getMessage();
+
 private:
 
 	const int MESSAGESIZE = 256;

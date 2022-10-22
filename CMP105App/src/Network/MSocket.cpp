@@ -59,15 +59,23 @@ bool MSocket::send(std::string data)
 	memset(socketMsgBuffer, '-', MESSAGESIZE);
 	memcpy(socketMsgBuffer, data.c_str(), std::min((int)data.size(), MESSAGESIZE));
 	// Check we send the message okay
-	if (socket.send(socketMsgBuffer, MESSAGESIZE))	
+	sf::Socket::Status status = socket.send(socketMsgBuffer, MESSAGESIZE);
+	if (status != sf::Socket::Status::Done)
 	{
-		std::cout << "ERROR: Socket send error" << std::endl;
+		std::cout << "ERROR: Socket send error" << status << std::endl;
 		return false;
 	}
+	else
+		std::cout << status << std::endl;
 	return true;
 }
 
 sf::TcpSocket* MSocket::getSFMLSocket()
 {
 	return &socket;
+}
+
+char* MSocket::getMessage()
+{
+	return socketMsgBuffer;
 }

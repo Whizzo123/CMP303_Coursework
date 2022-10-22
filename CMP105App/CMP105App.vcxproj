@@ -159,6 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Network\NetworkConnection.cpp" />
     <ClCompile Include="src\NetworkButton.cpp" />
     <ClCompile Include="src\Network\MListener.cpp" />
     <ClCompile Include="src\Network\MSocket.cpp" />
@@ -213,6 +214,7 @@
     <ClCompile Include="src\WinMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Network\NetworkConnection.h" />
     <ClInclude Include="src\NetworkButton.h" />
     <ClInclude Include="src\Network\MListener.h" />
     <ClInclude Include="src\Network\MSocket.h" />

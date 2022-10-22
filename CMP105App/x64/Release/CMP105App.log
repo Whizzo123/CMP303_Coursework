@@ -1,8 +1,42 @@
-﻿  MSocket.cpp
+﻿  Main.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.h(26,2): warning C4091: 'static ': ignored on left of 'NetworkingManager' when no variable is declared
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Main.cpp(79,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Main.cpp(102,62): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  MainMenu.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.h(26,2): warning C4091: 'static ': ignored on left of 'NetworkingManager' when no variable is declared
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\MainMenu.cpp(8,72): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\MainMenu.cpp(8,51): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+  NetworkButton.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.h(26,2): warning C4091: 'static ': ignored on left of 'NetworkingManager' when no variable is declared
+  NetworkingManager.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.h(26,2): warning C4091: 'static ': ignored on left of 'NetworkingManager' when no variable is declared
   Generating code
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.cpp(32): warning C4715: 'NetworkingManager::StartClient': not all control paths return a value
-  3 of 1393 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
+  9 of 1396 functions ( 0.6%) were compiled, the rest were copied from previous compilation.
+    2 functions were new in current compilation
     1 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   CMP105App.vcxproj -> C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\x64\Release\CMP303_App.exe

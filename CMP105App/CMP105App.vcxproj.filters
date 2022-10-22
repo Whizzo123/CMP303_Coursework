@@ -163,6 +163,7 @@
     <ClCompile Include="src\Network\MSocket.cpp" />
     <ClCompile Include="src\Network\MListener.cpp" />
     <ClCompile Include="src\NetworkButton.cpp" />
+    <ClCompile Include="src\Network\NetworkConnection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Armour.h">
@@ -316,6 +317,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\NetworkButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Network\NetworkConnection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

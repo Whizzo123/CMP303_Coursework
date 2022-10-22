@@ -25,6 +25,7 @@ public:
 	void resetNextLevel();
 	int getNextLevel();
 	virtual void switchToLevel() {};
+	void setNextLevel(int levelNumber) { nextLevel = levelNumber; };
 protected:
 	int nextLevel;
 };

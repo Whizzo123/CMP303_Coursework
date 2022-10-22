@@ -91,8 +91,8 @@ int main()
 	audioManager.addSound("sfx/painMinotaur.wav", "MinotaurDamage");
 	audioManager.addSound("sfx/chestOpening.wav", "ChestOpen");
 	audioManager.addSound("sfx/dungeonDoor.wav", "DungeonDoor");
-	audioManager.playMusicbyName("DungeonMusic");
-	audioManager.getMusic()->setLoop(true);
+	//audioManager.playMusicbyName("DungeonMusic");
+	//audioManager.getMusic()->setLoop(true);
 	//Initialize input and level objects
 	Input input;
 	GameState gameState;
