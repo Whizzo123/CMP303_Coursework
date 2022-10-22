@@ -1,0 +1,279 @@
+﻿  Background.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Character.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Character.cpp(20,18): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Character.cpp(140,19): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Character.cpp(160,26): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Character.cpp(219,9): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+  CharacterManager.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Chest.cpp
+  ChestManager.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\ChestManager.cpp(44,132): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  ConfigLoader.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\ConfigLoader.cpp(38,37): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\ConfigLoader.cpp(85,37): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+  CreditsMenu.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\CreditsMenu.cpp(8,72): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\CreditsMenu.cpp(8,51): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+  Cursor.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Cursor.cpp(17,56): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Cursor.cpp(16,92): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Cursor.cpp(50,56): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Cursor.cpp(49,92): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Cursor.cpp(58,56): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Cursor.cpp(58,44): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+          and
+          [
+              T=float
+          ]
+  DeathMenu.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\DeathMenu.cpp(8,72): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\DeathMenu.cpp(8,51): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+  DragController.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\DragController.cpp(21,56): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\DragController.cpp(20,92): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+  DungeonDiverTileMap.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\DungeonDiverTileMap.cpp(45,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\DungeonDiverTileMap.cpp(47,21): warning C4018: '<': signed/unsigned mismatch
+  DungeonExit.cpp
+  Enemy.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Enemy.cpp(4,85): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  ExtendedCollision.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\ExtendedCollision.cpp(37,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  GameLevel.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Gladiator.cpp
+  HealthUI.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Imp.cpp
+  Inventory.cpp
+  InventoryManager.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Generating Code...
+  Compiling...
+  Item.cpp
+  ItemToolTip.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\ItemToolTip.cpp(15,28): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\ItemToolTip.cpp(17,29): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\ItemToolTip.cpp(28,25): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+  Level.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Main.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Main.cpp(79,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Main.cpp(102,62): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  MainMenu.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\MainMenu.cpp(8,72): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\MainMenu.cpp(8,51): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+  Minotaur.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Minotaur.cpp(43,59): warning C4267: 'argument': conversion from 'size_t' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+  OptionsMenu.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\OptionsMenu.cpp(8,72): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\OptionsMenu.cpp(8,51): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+  Player.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Player.cpp(4,62): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Player.cpp(60,90): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Player.cpp(110,117): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Player.cpp(112,125): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Player.cpp(112,53): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+  Potion.cpp
+  Slot.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Slot.cpp(72,56): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Slot.cpp(71,92): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+  WinMenu.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\WinMenu.cpp(8,72): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\WinMenu.cpp(8,51): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+  Generating Code...
+C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\CMP105App\Slot.cpp(160): warning C4715: 'Slot::isItemCompatable': not all control paths return a value
+  CMP105App.vcxproj -> C:\Users\jaasc\OneDrive - Abertay University\Uni Stuff\CMP105 - Games Programming\Project\Code\Coursework\x64\Debug\CMP105App.exe
