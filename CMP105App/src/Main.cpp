@@ -136,6 +136,8 @@ int main()
 		// since it was last calculated (in seconds) and restart the clock.
 		deltaTime = clock.restart().asSeconds();
 
+		if(NetworkingManager::isServer() && NetworkingManager::isServerStarted())
+			NetworkingManager::SearchForCalls();
 		
 		// Call standard game loop functions (input, update and render)
 		levels[currentLevelIndex]->handleInput(deltaTime);

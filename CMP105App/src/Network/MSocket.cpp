@@ -48,6 +48,17 @@ bool MSocket::recieve()
 }
 
 
+bool MSocket::recieve(sf::Packet& packet)
+{
+	sf::Socket::Status status = socket.receive(packet);
+	if (status != sf::Socket::Status::Done)
+	{
+		std::cout << "ERROR: Socket packet recieve error" << std::endl;
+		return false;
+	}
+	return true;
+}
+
 /// <summary>
 /// Wrapper for SFML TcpSocket send method
 /// </summary>
@@ -58,8 +69,21 @@ bool MSocket::send(std::string data)
 	// Copy data to message buffer
 	memset(socketMsgBuffer, '-', MESSAGESIZE);
 	memcpy(socketMsgBuffer, data.c_str(), std::min((int)data.size(), MESSAGESIZE));
-	// Check we send the message okay
-	sf::Socket::Status status = socket.send(socketMsgBuffer, MESSAGESIZE);
+	 sf::Socket::Status status = socket.send(socketMsgBuffer, MESSAGESIZE);
+	 // Check we send the message okay
+	if (status != sf::Socket::Status::Done)
+	{
+		std::cout << "ERROR: Socket send error" << status << std::endl;
+		return false;
+	}
+	else
+		std::cout << status << std::endl;
+	return true;
+}
+
+bool MSocket::send(sf::Packet packet)
+{
+	sf::Socket::Status status = socket.send(packet);
 	if (status != sf::Socket::Status::Done)
 	{
 		std::cout << "ERROR: Socket send error" << status << std::endl;

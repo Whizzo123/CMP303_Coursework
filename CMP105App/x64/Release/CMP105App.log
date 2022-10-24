@@ -1,13 +1,220 @@
-﻿  Main.cpp
+﻿  MSocketSelector.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\MSocketSelector.cpp(44,12): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+  NetworkConnection.cpp
+  NetworkButton.cpp
 C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
 C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.h(26,2): warning C4091: 'static ': ignored on left of 'NetworkingManager' when no variable is declared
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.h(38,2): warning C4091: 'static ': ignored on left of 'NetworkingManager' when no variable is declared
+  MListener.cpp
+  MSocket.cpp
+  Armour.cpp
+  Background.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  BackgroundMap.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\BackgroundMap.cpp(22,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\BackgroundMap.cpp(24,21): warning C4018: '<': signed/unsigned mismatch
+  Button.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Button.cpp(34,56): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Button.cpp(33,92): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+  Character.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Character.cpp(20,18): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Character.cpp(140,19): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Character.cpp(160,20): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Character.cpp(219,9): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+  CharacterManager.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Chest.cpp
+  ChestManager.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\ChestManager.cpp(44,132): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  ConfigLoader.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\ConfigLoader.cpp(38,37): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\ConfigLoader.cpp(85,37): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+  CreditsMenu.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\CreditsMenu.cpp(8,72): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\CreditsMenu.cpp(8,51): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+  Cursor.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Cursor.cpp(17,56): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Cursor.cpp(16,92): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Cursor.cpp(50,56): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Cursor.cpp(49,92): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Cursor.cpp(58,56): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Cursor.cpp(58,44): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+          and
+          [
+              T=float
+          ]
+  DeathMenu.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DeathMenu.cpp(8,72): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DeathMenu.cpp(8,51): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+  DragController.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.cpp(21,56): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.cpp(20,92): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+  DungeonDiverTileMap.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DungeonDiverTileMap.cpp(45,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DungeonDiverTileMap.cpp(47,21): warning C4018: '<': signed/unsigned mismatch
+  DungeonExit.cpp
+  Compiling...
+  Enemy.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Enemy.cpp(4,85): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  ExtendedCollision.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\ExtendedCollision.cpp(37,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  Animation.cpp
+  AudioManager.cpp
+  BaseLevel.cpp
+  Collision.cpp
+  GameObject.cpp
+  GameState.cpp
+  Input.cpp
+  MusicObject.cpp
+  SoundObject.cpp
+  TileMap.cpp
+  VectorHelper.cpp
+  GameLevel.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Gladiator.cpp
+  HealthUI.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Imp.cpp
+  Inventory.cpp
+  InventoryManager.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Item.cpp
+  Compiling...
+  ItemToolTip.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\ItemToolTip.cpp(15,28): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\ItemToolTip.cpp(17,29): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\ItemToolTip.cpp(28,25): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+  Level.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  LevelLoaderButton.cpp
+  Main.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.h(38,2): warning C4091: 'static ': ignored on left of 'NetworkingManager' when no variable is declared
 C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Main.cpp(79,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
 C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Main.cpp(102,62): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
   MainMenu.cpp
 C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
 C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.h(26,2): warning C4091: 'static ': ignored on left of 'NetworkingManager' when no variable is declared
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.h(38,2): warning C4091: 'static ': ignored on left of 'NetworkingManager' when no variable is declared
 C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\MainMenu.cpp(8,72): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
           with
           [
@@ -26,17 +233,105 @@ C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\C
           [
               T=float
           ]
-  NetworkButton.cpp
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.h(26,2): warning C4091: 'static ': ignored on left of 'NetworkingManager' when no variable is declared
+  Minotaur.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Minotaur.cpp(43,59): warning C4267: 'argument': conversion from 'size_t' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
   NetworkingManager.cpp
 C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
 C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.h(26,2): warning C4091: 'static ': ignored on left of 'NetworkingManager' when no variable is declared
-  Generating code
-  9 of 1396 functions ( 0.6%) were compiled, the rest were copied from previous compilation.
-    2 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-  CMP105App.vcxproj -> C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\x64\Release\CMP303_App.exe
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.h(38,2): warning C4091: 'static ': ignored on left of 'NetworkingManager' when no variable is declared
+  NetworkObject.cpp
+  OptionsMenu.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\OptionsMenu.cpp(8,72): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\OptionsMenu.cpp(8,51): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+  Player.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Player.cpp(4,62): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Player.cpp(60,90): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Player.cpp(110,117): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Player.cpp(112,125): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Player.cpp(112,53): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+  Potion.cpp
+  Slot.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Slot.cpp(72,56): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Slot.cpp(71,92): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+  Weapon.cpp
+  WinMenu.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\WinMenu.cpp(8,72): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\WinMenu.cpp(8,51): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+Main.obj : error LNK2005: "class sf::Packet & __cdecl operator>>(class sf::Packet &,struct PlayerPosParams &)" (??5@YAAEAVPacket@sf@@AEAV01@AEAUPlayerPosParams@@@Z) already defined in NetworkButton.obj
+Main.obj : error LNK2005: "class sf::Packet & __cdecl operator<<(class sf::Packet &,struct PlayerPosParams const &)" (??6@YAAEAVPacket@sf@@AEAV01@AEBUPlayerPosParams@@@Z) already defined in NetworkButton.obj
+MainMenu.obj : error LNK2005: "class sf::Packet & __cdecl operator>>(class sf::Packet &,struct PlayerPosParams &)" (??5@YAAEAVPacket@sf@@AEAV01@AEAUPlayerPosParams@@@Z) already defined in NetworkButton.obj
+MainMenu.obj : error LNK2005: "class sf::Packet & __cdecl operator<<(class sf::Packet &,struct PlayerPosParams const &)" (??6@YAAEAVPacket@sf@@AEAV01@AEBUPlayerPosParams@@@Z) already defined in NetworkButton.obj
+NetworkingManager.obj : error LNK2005: "class sf::Packet & __cdecl operator>>(class sf::Packet &,struct PlayerPosParams &)" (??5@YAAEAVPacket@sf@@AEAV01@AEAUPlayerPosParams@@@Z) already defined in NetworkButton.obj
+NetworkingManager.obj : error LNK2005: "class sf::Packet & __cdecl operator<<(class sf::Packet &,struct PlayerPosParams const &)" (??6@YAAEAVPacket@sf@@AEAV01@AEBUPlayerPosParams@@@Z) already defined in NetworkButton.obj
+NetworkingManager.obj : error LNK2001: unresolved external symbol "private: static class MSocket * NetworkingManager::_mySocket" (?_mySocket@NetworkingManager@@0PEAVMSocket@@EA)
+NetworkingManager.obj : error LNK2001: unresolved external symbol "private: static class MSocketSelector * NetworkingManager::_selector" (?_selector@NetworkingManager@@0PEAVMSocketSelector@@EA)
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\x64\Release\CMP303_App.exe : fatal error LNK1120: 2 unresolved externals

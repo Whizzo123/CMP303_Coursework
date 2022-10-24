@@ -11,7 +11,9 @@ public:
 	MSocket(sf::IpAddress ip, unsigned short port, bool isListener);
 	~MSocket();
 	bool recieve();
+	bool recieve(sf::Packet& packet);
 	bool send(std::string data);
+	bool send(sf::Packet packet);
 	sf::TcpSocket* getSFMLSocket();
 	char* getMessage();
 

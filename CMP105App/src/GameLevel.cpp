@@ -16,7 +16,9 @@ GameLevel::GameLevel(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioMana
 	cursor = new Cursor(window, inventoryManager, input, player);
 	map = new DungeonDiverTileMap("DungeonWall_V2", sf::Vector2f(75, 75), mapDimensions, *mapData);
 	backgroundMap = new BackgroundMap("DungeonWall_V2", sf::Vector2f(75, 75), sf::Vector2u(100, 100));
-	spawnInEntities(numberOfEnemies, numberOfChests);
+	// We wannna get rid of this guy for now
+	//spawnInEntities(numberOfEnemies, numberOfChests);
+	// ____________________________________________
 	pauseFont.loadFromFile("font/arial.ttf");
 	pauseText.setFont(pauseFont);
 	pauseText.setString("Paused");
