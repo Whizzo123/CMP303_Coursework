@@ -3,6 +3,17 @@
 #include "Framework/VectorHelper.h"
 
 enum EnemyType { IMP, GLADIATOR, MINOTAUR };
+
+
+struct EnemyInfo
+{
+	sf::Int32 objectID;
+	EnemyType enemyClass;
+	sf::Vector2f spawnPosition;
+	sf::Vector2f patrolPosition;
+};
+
+
 class Enemy : public Character
 {
 public:

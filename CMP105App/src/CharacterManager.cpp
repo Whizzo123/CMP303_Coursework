@@ -48,7 +48,7 @@ std::vector<Enemy*> CharacterManager::getAllCharacters()
 void CharacterManager::draw(sf::RenderWindow* window)
 {
 	//For all characters
-	for (int i = 0; i < maxCharacters; i++)
+	for (int i = 0; i < characters.size(); i++)
 	{
 		//If character is alive
  		if (characters[i]->isAlive())
@@ -106,23 +106,24 @@ void CharacterManager::spawnAllCharacters()
 
 void CharacterManager::update(float dt, DungeonDiverTileMap* map, Player* player)
 {
-	if (characters.size() == 0)
-		spawnAllCharacters();
-	//For all characters
-	for (int i = 0; i < characters.size(); i++)
+	if (characters.size() != 0)
 	{
-		//If character is alive
-		if (characters[i]->isAlive())
+		//For all characters
+		for (int i = 0; i < characters.size(); i++)
 		{
-			//Check for collisions with map and player
-			map->collisionCheck(characters[i]);
-			characters[i]->setFollowing(ExtendedCollision::checkSphereRectCollision(player, characters[i], 200));
-			//If player is within following range set target to player
-			if (characters[i]->getFollowing())
-				characters[i]->setFollowingTarget(player);
-			else
-				characters[i]->setFollowingTarget(nullptr);
-			characters[i]->update(dt);
+			//If character is alive
+			if (characters[i]->isAlive())
+			{
+				//Check for collisions with map and player
+				map->collisionCheck(characters[i]);
+				characters[i]->setFollowing(ExtendedCollision::checkSphereRectCollision(player, characters[i], 200));
+				//If player is within following range set target to player
+				if (characters[i]->getFollowing())
+					characters[i]->setFollowingTarget(player);
+				else
+					characters[i]->setFollowingTarget(nullptr);
+				characters[i]->update(dt);
+			}
 		}
 	}
 }
@@ -130,7 +131,7 @@ void CharacterManager::update(float dt, DungeonDiverTileMap* map, Player* player
 Enemy* CharacterManager::checkCollisions(sf::FloatRect* fr)
 {
 	//For all characters
-	for (int i = 0; i < maxCharacters; i++)
+	for (int i = 0; i < characters.size(); i++)
 	{
 		//If character is alive
 		if (characters[i]->isAlive())

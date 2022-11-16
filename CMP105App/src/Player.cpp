@@ -21,6 +21,10 @@ Player::~Player(){}
 
 void Player::handleInput(float dt)
 {
+	if (input == nullptr)
+	{
+		return;
+	}
 	//Set velocity to 0
 	velocity = sf::Vector2f();
 	//Check for input on WASD keys

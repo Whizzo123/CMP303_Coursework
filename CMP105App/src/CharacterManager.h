@@ -7,14 +7,9 @@
 #include <vector>
 #include "ExtendedCollision.h"
 #include "Player.h"
+#include "Network/NetworkingManager.h"
 
-struct EnemyInfo
-{
-	sf::Int32 objectID;
-	EnemyType enemyClass;
-	sf::Vector2f spawnPosition;
-	sf::Vector2f patrolPosition;
-};
+
 
 class CharacterManager
 {

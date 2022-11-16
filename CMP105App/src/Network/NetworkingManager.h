@@ -5,8 +5,10 @@
 #include "MSocketSelector.h"
 #include <string>
 #include "NetworkPlayer.h"
-#include "../GameLevel.h"
+#include "../Player.h"
+#include "../Enemy.h"
 
+//const float NETWORK_TICK_TIME = 0.2f;
 
 struct EnemySpawnInfoResult
 {
@@ -22,30 +24,33 @@ static class NetworkingManager
 
 public:
 	static bool Find();
-	static bool StartServer(Level& level, Input* input, sf::RenderWindow* window, AudioManager* audioManager);
-	static bool StartClient(Level& level, Input* input, sf::RenderWindow* window, AudioManager* audioManager);
+	static bool StartServer(Input* input, sf::RenderWindow* window, AudioManager* audioManager);
+	static bool StartClient(Input* input, sf::RenderWindow* window, AudioManager* audioManager);
 	static bool JoinServer();
 	static bool isServer();
 	static bool isClientStarted();
 	static bool isServerStarted();
 	static sf::Packet CallServer(sf::String funcName);
-	static std::vector<sf::Vector2f> GetPlayerPos();
-	static void SearchForCalls(float dt);
-	static std::vector<NetworkPlayer*> GetNetworkPlayers();
-	static void ClientNetworkSync(float dt);
-	static void SyncNetworkPlayerPositions(std::vector<sf::Vector2f> positions);
+	static std::map<int, Player*> GetNetworkPlayers();
 	static void AddNetworkObject(NetworkObject* object);
-	static sf::Packet PacketUpdatedNetworkObjectData();
-	static std::vector<NetworkObject> GetUpdatedNetworkObjects();
-	static void SyncNetworkPosition(int socketID);
-	static void SpawnNetworkedEnemies();
-	static void GetEnemyInfoForClient(int socketID);
 	static void CreateLocalPlayer(Input* input, sf::RenderWindow* window, AudioManager* audio);
+	static int FindReadySockets();
+	static sf::Packet RecievePacketOnSocket(int socketID);
+	static sf::Packet RecievePacketOnSocket();
+	static void SendPlayerPosResultPacket(std::vector<sf::Vector2f> positions, int socketID);
+	static void SendEnemySpawnInfoResult(EnemyInfo* enemiesInfo, int length, int socketID);
+	static void SendFunctionCall(std::string funcCallName);
+	static void SendUpdatedNetworkData(std::vector<NetworkObject> networkObjects, Player* localPlayer);
+	static int GetNumConnections() { return _connectionIndex; }
+	static int GetMyConnectionIndex() { return _myConnectionIndex; }
+	static std::map<int, bool> GetNObjectChangeState() { return changeStateOfNetworkObjects; }
+	static std::vector<NetworkObject*> GetNetworkObjects() { return networkObjects; }
+	static std::map<int, NetworkObject*> GetPlayerNetworkObjects() { return _playerNetworkObjects; }
+	static void SetToBlock(bool value) { _mySocket->setBlocking(value); }
 
 	static const unsigned short port = 4444;
 	static const int numberOfConnectionsAllowed = 2;
 	static Player* localPlayer;
-	static GameLevel* currentLevel;
 	
 
 private:
@@ -53,7 +58,8 @@ private:
 	static bool _server;
 	static bool _serverStarted;
 	static NetworkConnection** _connections; 
-	static std::map<int, NetworkPlayer*> _players;
+	static std::map<int, Player*> _players;
+	static std::map<int, NetworkObject*> _playerNetworkObjects;
 	static int _connectionIndex;
 	static MListener* _listener;
 	static MSocketSelector* _selector;

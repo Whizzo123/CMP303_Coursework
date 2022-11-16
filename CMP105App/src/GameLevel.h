@@ -3,6 +3,7 @@
 #include "LevelLoaderButton.h"
 #include "BackgroundMap.h"
 #include <iostream>
+#include "Network/NetworkingManager.h"
 
 class GameLevel : public Level
 {
@@ -14,11 +15,19 @@ public:
 	void update(float dt) ;
 	void handleInput(float dt) override;
 	void render() override;
-	void switchToLevel(Player* player, std::vector<NetworkPlayer*> otherPlayers, bool isServer) override;
+	void switchToLevel() override;
 	void spawnInEntities(EnemyInfo* info, int enemyInfoLength);
 	std::vector<Enemy*> getEnemies() { return characterManager->getAllCharacters(); }
 	int getNumOfEnemies() { return characterManager->getCurrentCharacterCount(); }
 	void spawnInEntities();
+	std::vector<sf::Vector2f> GetPlayerPos();
+	void handleNetwork(float dt);
+	void SyncNetworkPosition(int socketID);
+	void GetEnemyInfoForClient(int socketID);
+	void SyncNetworkPlayerPositions(std::vector<sf::Vector2f> positions);
+	void PacketUpdatedNetworkObjectData();
+	std::vector<NetworkObject> GetUpdatedNetworkObjects();
+	void SpawnNetworkedEnemies();
 protected:
 	
 protected:
@@ -36,12 +45,13 @@ protected:
 	sf::Text pauseText;
 	sf::Font pauseFont;
 	LevelLoaderButton* skipLevelButton;
-	std::vector<NetworkPlayer*> _otherPlayers;
+	std::map<int, Player*> _otherPlayers;
 	int _numberOfEnemies;
 	int _numberOfChests;
 private:
 	sf::Vector2f pauseTextPos;
 	sf::Vector2f skipButtonPos;
 	int levelIndex;
+	float currentNetworkTickTime = 0.0f;
 };
 

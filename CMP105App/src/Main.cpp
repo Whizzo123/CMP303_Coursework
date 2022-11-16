@@ -156,38 +156,22 @@ int main()
 			int nextLevelIndex = levels[currentLevelIndex]->getNextLevel();
 			levels[currentLevelIndex]->resetNextLevel();
 			currentLevelIndex = nextLevelIndex;
-			// Let NetworkingManager know what level we are in
-			GameLevel* gameLevel = static_cast<GameLevel*>(levels[currentLevelIndex]);
-			if(gameLevel)
-				NetworkingManager::currentLevel = gameLevel;
-			levels[currentLevelIndex]->switchToLevel(NetworkingManager::localPlayer, NetworkingManager::GetNetworkPlayers(), NetworkingManager::isServer);
+			levels[currentLevelIndex]->switchToLevel();
 		}
-		
-		if (currentTickTime >= tickTime)
-		{
-			// By the time we get here the character manager has changed
-			if (NetworkingManager::isServer() && NetworkingManager::isServerStarted())
-			{
-				NetworkingManager::SearchForCalls(deltaTime);
-				currentTickTime = 0.0f;
-			}
-			else if (NetworkingManager::isServer() == false && NetworkingManager::isClientStarted())
-			{
-				if (NetworkingManager::currentLevel->getNumOfEnemies() == 0)
-					NetworkingManager::SpawnNetworkedEnemies();
-				NetworkingManager::ClientNetworkSync(deltaTime);
-				currentTickTime = 0.0f;
-			}
-		}
-		else
-			currentTickTime += deltaTime;
-
 		if (mNetworkStarted == false)
 		{
 			if (static_cast<MainMenu*>(levels[currentLevelIndex])->isStartClient() == true)
-				NetworkingManager::StartClient(*levels[currentLevelIndex], &input, &window, &audioManager);
+			{
+				NetworkingManager::StartClient(&input, &window, &audioManager);
+				levels[currentLevelIndex]->setNextLevel(2);
+				mNetworkStarted = true;
+			}
 			else if (static_cast<MainMenu*>(levels[currentLevelIndex])->isStartServer() == true)
-				NetworkingManager::StartServer(*levels[currentLevelIndex], &input, &window, &audioManager);
+			{
+				NetworkingManager::StartServer(&input, &window, &audioManager);
+				levels[currentLevelIndex]->setNextLevel(2);
+				mNetworkStarted = true;
+			}
 		}
 
 

@@ -25,7 +25,7 @@ public:
 	void render();
 	void resetNextLevel();
 	int getNextLevel();
-	virtual void switchToLevel(Player* player, std::vector<NetworkPlayer*> otherPlayers, bool isServer) {};
+	virtual void switchToLevel() {};
 	void setNextLevel(int levelNumber) { nextLevel = levelNumber; };
 	void setPlayer(Player* player) { this->player = player; }
 protected:

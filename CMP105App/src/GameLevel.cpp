@@ -55,6 +55,13 @@ void GameLevel::spawnInEntities(EnemyInfo* info, int enemyInfoLength)
 
 void GameLevel::update(float dt)
 {
+	if (currentNetworkTickTime > 0.1f)
+	{
+		handleNetwork(dt);
+		currentNetworkTickTime = 0.0f;
+	}
+	else
+		currentNetworkTickTime += dt;
 	skipLevelButton->update(dt);
 	//If skip level button clicked set next level 
 	if (skipLevelButton->isClicked())
@@ -74,12 +81,68 @@ void GameLevel::update(float dt)
 		//Update characters and player
 		characterManager->update(dt, map, player);
 		player->update(dt);
+		for (auto player : _otherPlayers)
+		{
+			player.second->update(dt);
+		}
 		player->setEnemyTarget(characterManager->checkCollisions(player->getAttackRect()));
 		background->update(dt);
 		inventoryManager->update(dt);
 		dragController->update(dt);
 		healthUI->update();
-		cursor->update();
+		cursor->update();		
+	}
+}
+
+void GameLevel::handleNetwork(float dt)
+{
+	// Use selector to see if any sockets have sent data to be used
+	if (NetworkingManager::isServer())
+	{
+		int socketID = NetworkingManager::FindReadySockets();
+		if (socketID != -1)
+		{
+			std::cout << "Recieving a message" << std::endl;
+			sf::Packet recievePacket = NetworkingManager::RecievePacketOnSocket(socketID);
+			std::cout << "Recieved message to packet" << std::endl;
+			FunctionName recvFuncName;
+			recievePacket >> recvFuncName;
+			std::string functionName = recvFuncName.funcName;
+			std::cout << "Recieved function name is " << functionName << std::endl;
+			//FUNCTION CALLS
+			if (functionName == "GetPlayerPos")
+			{
+				std::cout << "Calling function GetPlayerPos" << std::endl;
+				NetworkingManager::SendPlayerPosResultPacket(GetPlayerPos(), socketID);
+			}
+			else if (functionName == "SyncNetworkPosition")
+			{
+				std::cout << "Calling function SyncNetworkPosition" << std::endl;
+				SyncNetworkPosition(socketID);
+			}
+			else if (functionName == "GetEnemies")
+			{
+				std::cout << "Calling function GetEnemies" << std::endl;
+				GetEnemyInfoForClient(socketID);
+			}
+		}
+	}
+	else
+	{
+		if (characterManager->getCurrentCharacterCount() == 0)
+			SpawnNetworkedEnemies();
+		//Handle any requested events from server
+		sf::Packet packet = NetworkingManager::RecievePacketOnSocket();
+		if (packet)
+		{
+			// I have recieved data to update my network objects with
+			PlayerPosResult result;
+			packet >> result;
+			SyncNetworkPlayerPositions(result.resultPositions);
+		}
+		// Send any changed data
+		PacketUpdatedNetworkObjectData();
+		std::cout << "Sending change data" << std::endl;
 	}
 }
 
@@ -94,7 +157,7 @@ void GameLevel::render()
 	player->drawDebugInfo();
 	for (auto networkPlayer : _otherPlayers)
 	{
-		window->draw(*networkPlayer);
+		window->draw(*networkPlayer.second);
 	}
 	if (player->isAlive())
 	{
@@ -112,10 +175,10 @@ void GameLevel::render()
 	endDraw();
 }
 
-void GameLevel::switchToLevel(Player* player, std::vector<NetworkPlayer*> otherPlayers, bool isServer = false)
+void GameLevel::switchToLevel()
 {
-	setPlayer(player);
-	_otherPlayers = otherPlayers;
+	setPlayer(NetworkingManager::localPlayer);
+	_otherPlayers = NetworkingManager::GetNetworkPlayers();
 	inventoryManager->addToInventories(player->getInventory());
 	healthUI = new HealthUI(player, window, sf::Vector2f(window->getSize().x - 150.0f, window->getSize().y - 40.0f));
 	cursor = new Cursor(window, inventoryManager, input, player);
@@ -123,4 +186,108 @@ void GameLevel::switchToLevel(Player* player, std::vector<NetworkPlayer*> otherP
 	player->setChestManager(chestManager);
 	player->setDungeonExit(dungeonExit);
 	player->setNextLevel(&nextLevel);
+	if (NetworkingManager::isServer())
+		characterManager->spawnAllCharacters();
+}
+
+
+///NETWORKING FUNCTIONALLITY/////////////////////////////////////
+
+/// <summary>
+/// Gets all player positions to a vector
+/// </summary>
+/// <returns></returns>
+std::vector<sf::Vector2f> GameLevel::GetPlayerPos()
+{
+	std::vector<sf::Vector2f> positions;
+	positions.push_back(player->getPosition());
+	for (auto player : _otherPlayers)
+	{
+		positions.push_back(player.second->getPosition());
+	}
+	return positions;
+}
+
+void GameLevel::SyncNetworkPosition(int socketID)
+{
+	NetworkObjectUpdateData updatedObjects;
+	sf::Packet syncRecvPacket = NetworkingManager::RecievePacketOnSocket(socketID);
+	syncRecvPacket >> updatedObjects;
+	for (int i = 0; i < updatedObjects.length; i++)
+		_otherPlayers[updatedObjects.posSyncVars[i].objectID]->setPosition(updatedObjects.posSyncVars[i].newPosition);
+	for (int i = 1; i < NetworkingManager::GetNumConnections(); i++)
+	{
+		std::vector<sf::Vector2f> playerPositions = GetPlayerPos();
+		NetworkingManager::SendPlayerPosResultPacket(playerPositions, i);
+	}
+}
+
+void GameLevel::GetEnemyInfoForClient(int socketID)
+{
+	std::vector<Enemy*> enemies = getEnemies();
+	EnemySpawnInfoResult result;
+	int length = enemies.size();
+	EnemyInfo* enemiesInfo = new EnemyInfo[length];
+	for (int i = 0; i < length; i++)
+	{
+		EnemyInfo info;
+		// TODO switch out this connectionIndex for something else
+		info.objectID = i;
+		info.enemyClass = enemies[i]->getEnemyType();
+		info.spawnPosition = enemies[i]->getPosition();
+		info.patrolPosition = sf::Vector2f(0.0f, 0.0f);
+		enemiesInfo[i] = info;
+	}
+	NetworkingManager::SendEnemySpawnInfoResult(enemiesInfo, length, socketID);
+}
+
+///CLIENT FUNCTIONS////////////////////////////////////////////////
+void GameLevel::SyncNetworkPlayerPositions(std::vector<sf::Vector2f> positions)
+{
+	for (int i = 0; i < positions.size(); i++)
+	{
+		if (i != NetworkingManager::GetMyConnectionIndex())
+		{
+			sf::Vector2f pos = positions[i];
+			_otherPlayers[i]->setPosition(pos);
+		}
+	}
+}
+
+void GameLevel::PacketUpdatedNetworkObjectData()
+{
+	// Call function
+	NetworkingManager::SendFunctionCall("SyncNetworkPosition");
+	// Pass parameters
+	NetworkingManager::SendUpdatedNetworkData(GetUpdatedNetworkObjects(), player);
+}
+
+//TODO this won't work players are no longer network objects 
+std::vector<NetworkObject> GameLevel::GetUpdatedNetworkObjects()
+{
+	std::vector<NetworkObject> changedObjects;
+	int index = 0;
+	// Loop through the map of networkObject states
+	for (auto objectID : NetworkingManager::GetNObjectChangeState())
+	{
+		// If this object is recorded as having changed
+		if (objectID.second == true)
+		{
+			NetworkObject* nObject = NetworkingManager::GetPlayerNetworkObjects().at(objectID.first);
+			changedObjects.push_back(*nObject);
+			index++;
+		}
+	}
+	return changedObjects;
+}
+
+void GameLevel::SpawnNetworkedEnemies()
+{
+	NetworkingManager::SetToBlock(true);
+	NetworkingManager::SendFunctionCall("GetEnemies");
+	sf::Packet enemySpawnInfoPacket = NetworkingManager::RecievePacketOnSocket();
+	NetworkingManager::SetToBlock(false);
+	EnemySpawnInfoResult result;
+	enemySpawnInfoPacket >> result;
+	spawnInEntities(result.enemiesInfo, result.length);
 }
