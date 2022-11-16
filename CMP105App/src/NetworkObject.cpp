@@ -1,8 +1,15 @@
 #include "NetworkObject.h"
 
-NetworkObject::NetworkObject()
+NetworkObject::NetworkObject() : GameObject(),
+	objectID(0), nposition(-1.0f, -1.0f)
 {
+	
+}
 
+NetworkObject::NetworkObject(int ID, bool clientUpdateable) : GameObject(),
+	objectID(ID), nposition(-1.0f, -1.0f)
+{
+	canClientUpdate = clientUpdateable;
 }
 
 NetworkObject::~NetworkObject()

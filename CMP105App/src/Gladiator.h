@@ -7,7 +7,7 @@ public:
 	Gladiator(sf::Vector2f spawnPos, AudioManager* audio);
 	~Gladiator() {};
 	void update(float dt) override;
-
+	EnemyType getEnemyType() override;
 protected:
 	void setupAnimations() override;
 };

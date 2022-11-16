@@ -1,0 +1,3 @@
+Greymers Sword|1|1.7|
+Hoziers Axe|2|2|
+Mace of Ragnok|3|2|

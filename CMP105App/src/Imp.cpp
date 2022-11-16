@@ -11,6 +11,7 @@ Imp::Imp(sf::Vector2f spawnPos, AudioManager* audio) : Enemy("ImpV2", spawnPos, 
 	breakTimer = 2.0f;
 	currentBreakTimer = 2.0f;
 	this->damageAudioName = "ImpDamage";
+	_myType = IMP;
 };
 
 void Imp::update(float dt)
@@ -50,4 +51,9 @@ void Imp::setupAnimations()
 	deathAnimation.setFrameSpeed(0.2f);
 	deathAnimation.setLooping(false);
 	currentAnimation = &idleAnimation;
+}
+
+EnemyType Imp::getEnemyType()
+{
+	return _myType;
 }

@@ -12,6 +12,7 @@ Minotaur::Minotaur(sf::Vector2f spawnPos, AudioManager* audio)
 	breakTimer = 2.0f;
 	currentBreakTimer = 2.0f;
 	this->damageAudioName = "MinotaurDamage";
+	_myType = MINOTAUR;
 }
 
 void Minotaur::update(float dt)
@@ -50,4 +51,9 @@ void Minotaur::setupAnimations()
 	}
 	deathAnimation.setFrameSpeed(0.2f);
 	currentAnimation = &idleAnimation;
+}
+
+EnemyType Minotaur::getEnemyType()
+{
+	return _myType;
 }

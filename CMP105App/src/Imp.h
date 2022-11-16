@@ -9,6 +9,7 @@ public:
 	Imp(sf::Vector2f spawnPos, AudioManager* audio);
 	~Imp() { std::cout << "Calling Imp Deconstructor" << std::endl; };
 	void update(float dt) override;
+	EnemyType getEnemyType() override;
 protected:
 	void setupAnimations() override;
 };

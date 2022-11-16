@@ -8,7 +8,7 @@ class MSocket
 
 public:
 	MSocket();
-	MSocket(sf::IpAddress ip, unsigned short port, bool isListener);
+	MSocket(sf::IpAddress ip, unsigned short port, bool isListener = true, bool blocking=true);
 	~MSocket();
 	bool recieve();
 	bool recieve(sf::Packet& packet);
@@ -16,6 +16,7 @@ public:
 	bool send(sf::Packet packet);
 	sf::TcpSocket* getSFMLSocket();
 	char* getMessage();
+	void setBlocking(bool isBlocking);
 
 private:
 

@@ -1,6 +1,8 @@
 #pragma once
 #include "Character.h"
 #include "Framework/VectorHelper.h"
+
+enum EnemyType { IMP, GLADIATOR, MINOTAUR };
 class Enemy : public Character
 {
 public:
@@ -12,6 +14,7 @@ public:
 	Character* getFollowingTarget() { return followingTarget; }
 	void setFollowingTarget(Character* target) { followingTarget = target; }
 	void update(float dt) override;
+	virtual EnemyType getEnemyType() { return _myType; }
 protected:
 	void updateMovement(float dt);
 	void updateAnimations(float dt) override;
@@ -31,5 +34,6 @@ protected:
 	bool following;
 	bool attacking;
 	Character* followingTarget;
+	EnemyType _myType;
 };
 

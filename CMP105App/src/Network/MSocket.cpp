@@ -6,7 +6,7 @@ MSocket::MSocket() : socketMsgBuffer(new char[MESSAGESIZE])
 
 }
 
-MSocket::MSocket(sf::IpAddress ip, unsigned short port, bool isListener = true)
+MSocket::MSocket(sf::IpAddress ip, unsigned short port, bool isListener, bool blocking)
 {
 	if (!isListener)
 	{
@@ -18,6 +18,7 @@ MSocket::MSocket(sf::IpAddress ip, unsigned short port, bool isListener = true)
 			std::cout << "ERROR: Socket creation error for ip: " << ip.toString() << " and port: " << port << std::endl;
 		}
 	}
+	socket.setBlocking(blocking);
 	// Initialise socket message buffer
 	socketMsgBuffer = new char[MESSAGESIZE];
 	memset(socketMsgBuffer, '-', MESSAGESIZE);
@@ -26,6 +27,11 @@ MSocket::MSocket(sf::IpAddress ip, unsigned short port, bool isListener = true)
 MSocket::~MSocket()
 {
 	socket.disconnect();
+}
+
+void MSocket::setBlocking(bool isBlocking)
+{
+	socket.setBlocking(isBlocking);
 }
 
 /// <summary>

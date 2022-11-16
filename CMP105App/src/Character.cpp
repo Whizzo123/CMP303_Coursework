@@ -119,6 +119,8 @@ void Character::updateAnimations(float dt)
 		//Transition to walk animation
 		currentAnimation = &walkAnimation;
 	}
+	if (currentAnimation->getSize() == 0)
+		currentAnimation = &idleAnimation;
 	//Play current animation
 	currentAnimation->animate(dt);
 	//Set character texture to current frame of animation

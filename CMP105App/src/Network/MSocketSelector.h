@@ -10,7 +10,7 @@ public:
 	~MSocketSelector();
 
 	void add(MSocket* socket);
-	bool wait(float seconds);
+	bool wait(float seconds = 0.01f);
 	int GrabReadySocket(NetworkConnection** connectons, int numberOfConnections);
 
 private:

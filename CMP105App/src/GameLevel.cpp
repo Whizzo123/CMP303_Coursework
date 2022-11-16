@@ -1,24 +1,19 @@
 #include "GameLevel.h"
 
-GameLevel::GameLevel(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud, Player* player, sf::Vector2f playerSpawnPos,
+GameLevel::GameLevel(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud, Player* player,
 	int levelIndex, int numberOfEnemies, int numberOfChests, std::vector<int>* mapData, sf::Vector2u mapDimensions) : Level(hwnd, in, gs, aud)
 {
 	//Initialize variables
 	this->player = player;
 	this->levelIndex = levelIndex;
-	this->playerSpawnPos = playerSpawnPos;
 	inventoryManager = new InventoryManager();
 	dragController = new DragController(input, inventoryManager, window);
 	chestManager = new ChestManager(input, inventoryManager, audio);
-	background = new Background(window, player);
-	inventoryManager->addToInventories(player->getInventory());
-	healthUI = new HealthUI(player, window, sf::Vector2f(window->getSize().x - 150.0f, window->getSize().y - 40.0f));
-	cursor = new Cursor(window, inventoryManager, input, player);
 	map = new DungeonDiverTileMap("DungeonWall_V2", sf::Vector2f(75, 75), mapDimensions, *mapData);
 	backgroundMap = new BackgroundMap("DungeonWall_V2", sf::Vector2f(75, 75), sf::Vector2u(100, 100));
 	// We wannna get rid of this guy for now
-	//spawnInEntities(numberOfEnemies, numberOfChests);
 	// ____________________________________________
+	characterManager = new CharacterManager(numberOfEnemies, audio, map);
 	pauseFont.loadFromFile("font/arial.ttf");
 	pauseText.setFont(pauseFont);
 	pauseText.setString("Paused");
@@ -47,11 +42,15 @@ void GameLevel::handleInput(float dt)
 	}
 }
 
-void GameLevel::spawnInEntities(int numberOfEnemies, int numberOfChests)
+void GameLevel::spawnInEntities()
 {
 	dungeonExit = new DungeonExit(map->getSpawnableTiles().back(), &nextLevel, levelIndex);
-	characterManager = new CharacterManager(numberOfEnemies, audio, map);
-	chestManager->spawn(map, window, input, numberOfChests);
+	chestManager->spawn(map, window, input, _numberOfChests);
+}
+
+void GameLevel::spawnInEntities(EnemyInfo* info, int enemyInfoLength)
+{
+	characterManager->spawnNetworkEnemies(info, enemyInfoLength);
 }
 
 void GameLevel::update(float dt)
@@ -90,9 +89,13 @@ void GameLevel::render()
 	backgroundMap->render(window);
 	map->render(window);
 	chestManager->draw(window);
-	window->draw(*dungeonExit);
+	//window->draw(*dungeonExit);
 	characterManager->draw(window);
 	player->drawDebugInfo();
+	for (auto networkPlayer : _otherPlayers)
+	{
+		window->draw(*networkPlayer);
+	}
 	if (player->isAlive())
 	{
 		window->draw(*player);
@@ -109,10 +112,15 @@ void GameLevel::render()
 	endDraw();
 }
 
-void GameLevel::switchToLevel()
+void GameLevel::switchToLevel(Player* player, std::vector<NetworkPlayer*> otherPlayers, bool isServer = false)
 {
+	setPlayer(player);
+	_otherPlayers = otherPlayers;
+	inventoryManager->addToInventories(player->getInventory());
+	healthUI = new HealthUI(player, window, sf::Vector2f(window->getSize().x - 150.0f, window->getSize().y - 40.0f));
+	cursor = new Cursor(window, inventoryManager, input, player);
+	background = new Background(window, player);
 	player->setChestManager(chestManager);
 	player->setDungeonExit(dungeonExit);
-	player->setPosition(playerSpawnPos);
 	player->setNextLevel(&nextLevel);
 }

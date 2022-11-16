@@ -76,6 +76,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <SourcePath>C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network;C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src;$(SourcePath)</SourcePath>
+    <LibraryPath>C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\SFML\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -114,7 +116,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)/SFML/lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-audio-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-audio-d.lib;sfml-network-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -159,6 +161,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Network\NetworkCharacter.cpp" />
+    <ClCompile Include="src\Network\NetworkPlayer.cpp" />
     <ClCompile Include="src\Network\MSocketSelector.cpp" />
     <ClCompile Include="src\Network\NetworkConnection.cpp" />
     <ClCompile Include="src\NetworkButton.cpp" />
@@ -215,6 +219,8 @@
     <ClCompile Include="src\WinMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Network\NetworkCharacter.h" />
+    <ClInclude Include="src\Network\NetworkPlayer.h" />
     <ClInclude Include="src\Network\MSocketSelector.h" />
     <ClInclude Include="src\Network\NetworkConnection.h" />
     <ClInclude Include="src\NetworkButton.h" />

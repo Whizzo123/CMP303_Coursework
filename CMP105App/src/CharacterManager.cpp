@@ -6,22 +6,43 @@ CharacterManager::CharacterManager(int maxCharacters, AudioManager* audio, Dunge
 	this->maxCharacters = maxCharacters;
 	this->audio = audio;
 	this->map = map;
-	//For number of max characters
-	for (int i = 0; i < maxCharacters; i++)
+}
+
+/// <summary>
+/// Responsible for spawning characters from network
+/// </summary>
+/// <param name="info"></param>
+/// <param name="length"></param>
+void CharacterManager::spawnNetworkEnemies(EnemyInfo* info, int length)
+{
+	for (int i = 0; i < length; i++)
 	{
-		//Pick random number between 100 - 1
-		int random = rand() % 100 + 1;
-		//If less than 60 spawn imp
-		if(random < 60)
-			characters.push_back(new Imp(map->findRandomSpawnPos(), audio));
-		//If between 60 and 84 spawn gladiator
-		else if(random < 85)
-			characters.push_back(new Gladiator(map->findRandomSpawnPos(), audio));
-		//If above 85 spawn minotaur
-		else
-			characters.push_back(new Minotaur(map->findRandomSpawnPos(), audio));
+		EnemyInfo enemyInfo = info[i];
+		switch (enemyInfo.enemyClass)
+		{
+		case IMP:
+			characters.push_back(new Imp(enemyInfo.spawnPosition, audio));
+			break;
+		case GLADIATOR:
+			characters.push_back(new Gladiator(enemyInfo.spawnPosition, audio));
+			break;
+		case MINOTAUR:
+			characters.push_back( new Minotaur(enemyInfo.spawnPosition, audio));
+			break;
+		default:
+			break;
+		}
 		characters[i]->setAlive(true);
 	}
+}
+
+std::vector<Enemy*> CharacterManager::getAllCharacters()
+{
+	// Check have we spawned yet
+	if (characters.size() == 0)
+		spawnAllCharacters();
+	
+	return characters;
 }
 
 void CharacterManager::draw(sf::RenderWindow* window)
@@ -64,10 +85,31 @@ void CharacterManager::spawn(std::string characterName, sf::Vector2f spawnPos)
 	}
 }
 
+void CharacterManager::spawnAllCharacters()
+{
+	for (int i = 0; i < maxCharacters; i++)
+	{
+		//Pick random number between 100 - 1
+		int random = rand() % 100 + 1;
+		//If less than 60 spawn imp
+		if (random < 60)
+			characters.push_back(new Imp(map->findRandomSpawnPos(), audio));
+		//If between 60 and 84 spawn gladiator
+		else if (random < 85)
+			characters.push_back(new Gladiator(map->findRandomSpawnPos(), audio));
+		//If above 85 spawn minotaur
+		else
+			characters.push_back(new Minotaur(map->findRandomSpawnPos(), audio));
+		characters[i]->setAlive(true);
+	}
+}
+
 void CharacterManager::update(float dt, DungeonDiverTileMap* map, Player* player)
 {
+	if (characters.size() == 0)
+		spawnAllCharacters();
 	//For all characters
-	for (int i = 0; i < maxCharacters; i++)
+	for (int i = 0; i < characters.size(); i++)
 	{
 		//If character is alive
 		if (characters[i]->isAlive())

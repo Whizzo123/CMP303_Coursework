@@ -11,6 +11,7 @@ Gladiator::Gladiator(sf::Vector2f spawnPos, AudioManager* audio) : Enemy("Gladia
 	breakTimer = 2.0f;
 	currentBreakTimer = 2.0f;
 	this->damageAudioName = "GladiatorDamage";
+	_myType = GLADIATOR;
 }
 
 void Gladiator::update(float dt)
@@ -50,4 +51,9 @@ void Gladiator::setupAnimations()
 	deathAnimation.setFrameSpeed(0.2f);
 	deathAnimation.setLooping(false);
 	currentAnimation = &idleAnimation;
+}
+
+EnemyType Gladiator::getEnemyType()
+{
+	return _myType;
 }
