@@ -10,6 +10,9 @@ Enemy::Enemy(std::string textureName, sf::Vector2f pos, sf::Vector2f size, float
 	currentAttackCooldown = 0.0f;
 	this->weaponDamage = weaponDamage;
 	this->attackRange = attackRange;
+	float randomX = -1 + static_cast<float> (rand() / (static_cast<float>(RAND_MAX / (1 - (-1)))));
+	float randomY = -1 + static_cast<float> (rand() / (static_cast<float>(RAND_MAX / (1 - (-1)))));
+	this->currentMoveDirection = sf::Vector2f(randomX, randomY);
 }
 
 void Enemy::update(float dt)
@@ -64,9 +67,8 @@ void Enemy::updateMovement(float dt)
 	else if (onBreak)
 	{
 		//Get random vector 
-		float randomX = -1 + static_cast<float> (rand() / (static_cast<float>(RAND_MAX / (1 - (-1)))));
-		float randomY = -1 + static_cast<float> (rand() / (static_cast<float>(RAND_MAX / (1 - (-1)))));
-		velocity = sf::Vector2f(randomX, randomY) * speed;
+		
+		velocity = currentMoveDirection;
 		currentMoveTimer = moveTimer;
 		//End break
 		moving = true;
@@ -91,6 +93,16 @@ void Enemy::updateMovement(float dt)
 		moving = false;
 		currentBreakTimer = breakTimer;
 	}
+}
+
+void Enemy::setMoveDirection(sf::Vector2f newMoveDirection)
+{
+	velocity = newMoveDirection * speed;
+}
+
+sf::Vector2f Enemy::getMoveDirection()
+{
+	return currentMoveDirection;
 }
 
 void Enemy::attack(Character* character)

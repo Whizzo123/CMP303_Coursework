@@ -26,6 +26,8 @@ public:
 	void setFollowingTarget(Character* target) { followingTarget = target; }
 	void update(float dt) override;
 	virtual EnemyType getEnemyType() { return _myType; }
+	void setMoveDirection(sf::Vector2f moveDirection);
+	sf::Vector2f getMoveDirection();
 protected:
 	void updateMovement(float dt);
 	void updateAnimations(float dt) override;
@@ -46,5 +48,6 @@ protected:
 	bool attacking;
 	Character* followingTarget;
 	EnemyType _myType;
+	sf::Vector2f currentMoveDirection;
 };
 

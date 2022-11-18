@@ -15,6 +15,7 @@ Player* NetworkingManager::localPlayer = nullptr;
 std::map<int, bool> NetworkingManager::changeStateOfNetworkObjects = std::map<int, bool>();
 std::vector<NetworkObject*> NetworkingManager::networkObjects = std::vector<NetworkObject*>();
 std::map<int, NetworkObject*> NetworkingManager::_playerNetworkObjects = std::map<int, NetworkObject*>();
+std::map<int, bool> NetworkingManager::socketIDToCharacterInitialised = std::map<int, bool>();
 
 bool NetworkingManager::Find()
 {
@@ -41,6 +42,7 @@ bool NetworkingManager::StartServer(Input* input, sf::RenderWindow* window, Audi
 	sf::Vector2f spawnPos = sf::Vector2f(100, 275);
 	_players[_connectionIndex] = new Player("Dwarf_V2", spawnPos, sf::Vector2f(100, 100), 200.0f, nullptr, window, audioManager, 10.0f);
 	_playerNetworkObjects[_connectionIndex] = new NetworkObject(_connectionIndex, false);
+	socketIDToCharacterInitialised[_connectionIndex] = false;
 	std::cout << "Client connected" << std::endl;
 	// Send the client a welcome connection
 	sf::Packet sendPacket;
@@ -77,6 +79,7 @@ bool NetworkingManager::StartClient(Input* input, sf::RenderWindow* window, Audi
 	CreateLocalPlayer(input, window, audioManager);
 	SendFunctionCall("GetPlayerPos");
 	sf::Packet posResultPacket = RecievePacketOnSocket();
+	std::cout << "Recieved player pos" << std::endl;
 	PlayerPosResult results;
 	posResultPacket >> results;
 	for (int i = 0; i < results.resultPositions.size(); i++)
@@ -146,6 +149,10 @@ void NetworkingManager::SendPlayerPosResultPacket(std::vector<sf::Vector2f> posi
 	result.vecLength = positions.size();
 	result.resultPositions = positions;
 	sendPacket << result;
+	if (NetworkingManager::IsCharacterInitialised(socketID))
+	{
+		SendFunctionCall("SyncNetworkPlayerPositions", socketID);
+	}
 	_connections[socketID]->getConnectionSocket()->send(sendPacket);
 }
 
@@ -156,16 +163,26 @@ void NetworkingManager::SendEnemySpawnInfoResult(EnemyInfo* enemiesInfo, int len
 	result.enemiesInfo = enemiesInfo;
 	sf::Packet sendEnemyInfoPacket;
 	sendEnemyInfoPacket << result;
+	//SendFunctionCall("SpawnNetworkedEnemies", socketID);
 	_connections[socketID]->getConnectionSocket()->send(sendEnemyInfoPacket);
 }
 
-void NetworkingManager::SendFunctionCall(std::string funcCallName)
+void NetworkingManager::SendFunctionCall(std::string funcCallName, int socketID)
 {
 	sf::Packet packet;
 	FunctionName funcCall;
 	funcCall.funcName = funcCallName;
 	packet << funcCall;
-	_mySocket->send(packet);
+	if (socketID == -1)
+	{
+		std::cout << "Sending eventCall to server: " << funcCallName << std::endl;
+		_mySocket->send(packet);
+	}
+	else
+	{
+		std::cout << "Sending eventCall to client: " << funcCallName << std::endl;
+		_connections[socketID]->getConnectionSocket()->send(packet);
+	}
 }
 
 void NetworkingManager::SendUpdatedNetworkData(std::vector<NetworkObject> networkObjects, Player* localPlayer)
@@ -191,6 +208,22 @@ void NetworkingManager::SendUpdatedNetworkData(std::vector<NetworkObject> networ
 	sf::Packet posSyncPacket;
 	posSyncPacket << updateData;
 	_mySocket->send(posSyncPacket);
+}
+
+void NetworkingManager::SendUpdatedNetworkData(std::string eventCall, NetworkObjectUpdateData data, int socketID)
+{
+	sf::Packet packet;
+	packet << data;
+	if (socketID == -1)
+	{
+		SendFunctionCall(eventCall);
+		_mySocket->send(packet);
+	}
+	else
+	{
+		SendFunctionCall(eventCall, socketID);
+		_connections[socketID]->getConnectionSocket()->send(packet);
+	}
 }
 
 void NetworkingManager::CreateLocalPlayer(Input* input, sf::RenderWindow* window, AudioManager* audio)

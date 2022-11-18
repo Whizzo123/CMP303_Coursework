@@ -22,17 +22,23 @@ void CharacterManager::spawnNetworkEnemies(EnemyInfo* info, int length)
 		{
 		case IMP:
 			characters.push_back(new Imp(enemyInfo.spawnPosition, audio));
+			characters[i]->setMoveDirection(enemyInfo.patrolPosition);
+			characters[i]->setAlive(true);
 			break;
 		case GLADIATOR:
 			characters.push_back(new Gladiator(enemyInfo.spawnPosition, audio));
+			characters[i]->setMoveDirection(enemyInfo.patrolPosition);
+			characters[i]->setAlive(true);
 			break;
 		case MINOTAUR:
 			characters.push_back( new Minotaur(enemyInfo.spawnPosition, audio));
+			characters[i]->setMoveDirection(enemyInfo.patrolPosition);
+			characters[i]->setAlive(true);
 			break;
 		default:
 			break;
 		}
-		characters[i]->setAlive(true);
+		
 	}
 }
 
@@ -145,4 +151,19 @@ Enemy* CharacterManager::checkCollisions(sf::FloatRect* fr)
 		}
 	}
 	return nullptr;
+}
+
+std::vector<sf::Vector2f> CharacterManager::getEnemyTargetPositions()
+{
+	std::vector<sf::Vector2f> targetPositions;
+	for (int i = 0; i < characters.size(); i++)
+	{
+		targetPositions.push_back(characters[i]->getMoveDirection());
+	}
+	return targetPositions;
+}
+
+Enemy* CharacterManager::getEnemy(int index)
+{
+	return characters[index];
 }

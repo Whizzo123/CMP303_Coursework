@@ -27,7 +27,9 @@ public:
 	void SyncNetworkPlayerPositions(std::vector<sf::Vector2f> positions);
 	void PacketUpdatedNetworkObjectData();
 	std::vector<NetworkObject> GetUpdatedNetworkObjects();
-	void SpawnNetworkedEnemies();
+	void SpawnNetworkedEnemies(EnemySpawnInfoResult result);
+	void ServerUpdateEnemyPositions();
+	void SyncNetworkEnemyPositions(NetworkObjectUpdateData data);
 protected:
 	
 protected:

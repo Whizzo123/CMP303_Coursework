@@ -16,6 +16,17 @@ struct EnemySpawnInfoResult
 	EnemyInfo* enemiesInfo;
 };
 
+struct NetworkObjectPositionSyncVar
+{
+	sf::Int32 objectID;
+	sf::Vector2f newPosition;
+};
+
+struct NetworkObjectUpdateData
+{
+	sf::Int32 length;
+	NetworkObjectPositionSyncVar* posSyncVars;
+};
 
 static class NetworkingManager
 {
@@ -39,14 +50,17 @@ public:
 	static sf::Packet RecievePacketOnSocket();
 	static void SendPlayerPosResultPacket(std::vector<sf::Vector2f> positions, int socketID);
 	static void SendEnemySpawnInfoResult(EnemyInfo* enemiesInfo, int length, int socketID);
-	static void SendFunctionCall(std::string funcCallName);
+	static void SendFunctionCall(std::string funcCallName, int socketID = -1);
 	static void SendUpdatedNetworkData(std::vector<NetworkObject> networkObjects, Player* localPlayer);
+	static void SendUpdatedNetworkData(std::string eventCall, NetworkObjectUpdateData data, int socketID = -1);
 	static int GetNumConnections() { return _connectionIndex; }
 	static int GetMyConnectionIndex() { return _myConnectionIndex; }
 	static std::map<int, bool> GetNObjectChangeState() { return changeStateOfNetworkObjects; }
 	static std::vector<NetworkObject*> GetNetworkObjects() { return networkObjects; }
 	static std::map<int, NetworkObject*> GetPlayerNetworkObjects() { return _playerNetworkObjects; }
 	static void SetToBlock(bool value) { _mySocket->setBlocking(value); }
+	static void SetCharacterInitialised(int socketID) { socketIDToCharacterInitialised[socketID] = true; }
+	static bool IsCharacterInitialised(int socketID) { return socketIDToCharacterInitialised[socketID]; }
 
 	static const unsigned short port = 4444;
 	static const int numberOfConnectionsAllowed = 2;
@@ -69,6 +83,7 @@ private:
 	static bool _clientStarted;
 	static std::map<int, bool> changeStateOfNetworkObjects;
 	static std::vector<NetworkObject*> networkObjects;
+	static std::map<int, bool> socketIDToCharacterInitialised;
 	
 };
 
@@ -80,17 +95,9 @@ struct PlayerPosResult
 	std::vector<sf::Vector2f> resultPositions;
 };
 
-struct NetworkObjectPositionSyncVar
-{
-	sf::Int32 objectID;
-	sf::Vector2f newPosition;
-};
 
-struct NetworkObjectUpdateData
-{
-	sf::Int32 length;
-	NetworkObjectPositionSyncVar* posSyncVars;
-};
+
+
 
 struct FunctionName
 {

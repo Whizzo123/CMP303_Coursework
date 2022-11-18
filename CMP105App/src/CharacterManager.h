@@ -26,6 +26,8 @@ public:
 	void spawnNetworkEnemies(EnemyInfo* info, int length);
 	std::vector<Enemy*> getAllCharacters();
 	int getCurrentCharacterCount() { return characters.size(); }
+	std::vector<sf::Vector2f> getEnemyTargetPositions();
+	Enemy* getEnemy(int index);
 private:
 	//Vector of all enemies in level
 	std::vector<Enemy*> characters;
