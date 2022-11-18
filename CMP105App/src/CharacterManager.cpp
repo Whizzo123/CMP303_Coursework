@@ -107,6 +107,7 @@ void CharacterManager::spawnAllCharacters()
 		else
 			characters.push_back(new Minotaur(map->findRandomSpawnPos(), audio));
 		characters[i]->setAlive(true);
+		characters[i]->setIsServer(true);
 	}
 }
 

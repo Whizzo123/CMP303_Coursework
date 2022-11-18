@@ -78,9 +78,13 @@ bool NetworkingManager::StartClient(Input* input, sf::RenderWindow* window, Audi
 	std::cout << "Connection index" << _myConnectionIndex << std::endl;
 	CreateLocalPlayer(input, window, audioManager);
 	SendFunctionCall("GetPlayerPos");
-	sf::Packet posResultPacket = RecievePacketOnSocket();
+	// TODO create simpler method of dealing with unneccessary functionCall
+	sf::Packet* packet = RecievePacketOnSocket();
+	sf::Packet posResultPacket = *packet;
 	std::cout << "Recieved player pos" << std::endl;
 	PlayerPosResult results;
+	std::string discardFuncCall;
+	posResultPacket >> discardFuncCall;
 	posResultPacket >> results;
 	for (int i = 0; i < results.resultPositions.size(); i++)
 	{
@@ -135,11 +139,14 @@ sf::Packet NetworkingManager::RecievePacketOnSocket(int socketID)
 	return recievePacket;
 }
 
-sf::Packet NetworkingManager::RecievePacketOnSocket()
+sf::Packet* NetworkingManager::RecievePacketOnSocket()
 {
-	sf::Packet packet;
-	_mySocket->recieve(packet);
-	return packet;
+	sf::Packet* packet = new sf::Packet();
+	bool okay = _mySocket->recieve(*packet);
+	if (okay)
+		return packet;
+	else
+		return nullptr;
 }
 
 void NetworkingManager::SendPlayerPosResultPacket(std::vector<sf::Vector2f> positions, int socketID)
@@ -148,11 +155,12 @@ void NetworkingManager::SendPlayerPosResultPacket(std::vector<sf::Vector2f> posi
 	PlayerPosResult result;
 	result.vecLength = positions.size();
 	result.resultPositions = positions;
+	sendPacket << "SyncNetworkPlayerPositions";
 	sendPacket << result;
-	if (NetworkingManager::IsCharacterInitialised(socketID))
+	/*if (NetworkingManager::IsCharacterInitialised(socketID))
 	{
 		SendFunctionCall("SyncNetworkPlayerPositions", socketID);
-	}
+	}*/
 	_connections[socketID]->getConnectionSocket()->send(sendPacket);
 }
 
@@ -162,6 +170,7 @@ void NetworkingManager::SendEnemySpawnInfoResult(EnemyInfo* enemiesInfo, int len
 	result.length = length;
 	result.enemiesInfo = enemiesInfo;
 	sf::Packet sendEnemyInfoPacket;
+	sendEnemyInfoPacket << "SpawnNetworkedEnemies";
 	sendEnemyInfoPacket << result;
 	//SendFunctionCall("SpawnNetworkedEnemies", socketID);
 	_connections[socketID]->getConnectionSocket()->send(sendEnemyInfoPacket);
@@ -170,9 +179,7 @@ void NetworkingManager::SendEnemySpawnInfoResult(EnemyInfo* enemiesInfo, int len
 void NetworkingManager::SendFunctionCall(std::string funcCallName, int socketID)
 {
 	sf::Packet packet;
-	FunctionName funcCall;
-	funcCall.funcName = funcCallName;
-	packet << funcCall;
+	packet << funcCallName;
 	if (socketID == -1)
 	{
 		std::cout << "Sending eventCall to server: " << funcCallName << std::endl;
@@ -184,14 +191,14 @@ void NetworkingManager::SendFunctionCall(std::string funcCallName, int socketID)
 		_connections[socketID]->getConnectionSocket()->send(packet);
 	}
 }
-
+// TODO make this one thing or something like that
 void NetworkingManager::SendUpdatedNetworkData(std::vector<NetworkObject> networkObjects, Player* localPlayer)
 {
 	NetworkObjectUpdateData updateData;
 	int updateArrayLength = networkObjects.size() + 1;
-	updateData.length = updateArrayLength;
+	updateData.playerLength = updateArrayLength;
 	NetworkObjectPositionSyncVar* syncVars = new NetworkObjectPositionSyncVar[updateArrayLength];
-	for (int i = 0; i < updateData.length - 1; i++)
+	for (int i = 0; i < updateData.playerLength - 1; i++)
 	{
 		NetworkObjectPositionSyncVar var;
 		var.objectID = networkObjects[i].GetID();
@@ -204,8 +211,11 @@ void NetworkingManager::SendUpdatedNetworkData(std::vector<NetworkObject> networ
 	posSyncVar.newPosition = localPlayer->getPosition();
 	syncVars[updateArrayLength - 1] = posSyncVar;
 	// Set Update Data to point to sync vars
-	updateData.posSyncVars = syncVars;
+	updateData.playerPosSyncVars = syncVars;
+	updateData.enemyPosSyncVars = 0;
+	updateData.enemyLength = 0;
 	sf::Packet posSyncPacket;
+	posSyncPacket << "SyncNetworkPosition";
 	posSyncPacket << updateData;
 	_mySocket->send(posSyncPacket);
 }
@@ -213,15 +223,20 @@ void NetworkingManager::SendUpdatedNetworkData(std::vector<NetworkObject> networ
 void NetworkingManager::SendUpdatedNetworkData(std::string eventCall, NetworkObjectUpdateData data, int socketID)
 {
 	sf::Packet packet;
-	packet << data;
+	sf::String eventName = "ServerUpdateEnemyPositions";
 	if (socketID == -1)
 	{
-		SendFunctionCall(eventCall);
+		//SendFunctionCall(eventCall);
+		
+		packet << "ServerUpdateEnemyPositions";
+		packet << data;
 		_mySocket->send(packet);
 	}
 	else
 	{
-		SendFunctionCall(eventCall, socketID);
+		//SendFunctionCall(eventCall, socketID);
+		packet << "ServerUpdateEnemyPositions";
+		packet << data;
 		_connections[socketID]->getConnectionSocket()->send(packet);
 	}
 }
@@ -321,24 +336,38 @@ sf::Packet& operator >> (sf::Packet& packet, NetworkObjectPositionSyncVar& syncV
 	return packet >> syncVar.objectID >> syncVar.newPosition;
 }
 
+
 sf::Packet& operator << (sf::Packet& packet, const NetworkObjectUpdateData& data)
 {
-	packet << data.length;
-	for (int i = 0; i < data.length; i++)
+	packet << data.playerLength;
+	for (int i = 0; i < data.playerLength; i++)
 	{
-		packet << data.posSyncVars[i];
+		packet << data.playerPosSyncVars[i];
+	}
+	packet << data.enemyLength;
+	for (int i = 0; i < data.enemyLength; i++)
+	{
+		packet << data.enemyPosSyncVars[i];
 	}
 	return packet;
 }
 sf::Packet& operator >> (sf::Packet& packet, NetworkObjectUpdateData& data)
 {
-	packet >> data.length;
-	data.posSyncVars = new NetworkObjectPositionSyncVar[data.length];
-	for (int i = 0; i < data.length; i++)
+	packet >> data.playerLength;
+	data.playerPosSyncVars = new NetworkObjectPositionSyncVar[data.playerLength];
+	for (int i = 0; i < data.playerLength; i++)
 	{
 		NetworkObjectPositionSyncVar resultPos;
 		packet >> resultPos;
-		data.posSyncVars[i] = resultPos;
+		data.playerPosSyncVars[i] = resultPos;
+	}
+	packet >> data.enemyLength;
+	data.enemyPosSyncVars = new NetworkObjectPositionSyncVar[data.enemyLength];
+	for (int i = 0; i < data.enemyLength; i++)
+	{
+		NetworkObjectPositionSyncVar resultPos;
+		packet >> resultPos;
+		data.enemyPosSyncVars[i] = resultPos;
 	}
 	return packet;
 }

@@ -59,7 +59,7 @@ bool MSocket::recieve(sf::Packet& packet)
 	sf::Socket::Status status = socket.receive(packet);
 	if (status != sf::Socket::Status::Done)
 	{
-		std::cout << "ERROR: Socket packet recieve error" << std::endl;
+		//std::cout << "ERROR: Socket packet recieve error" << std::endl;
 		return false;
 	}
 	return true;

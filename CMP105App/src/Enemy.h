@@ -28,6 +28,7 @@ public:
 	virtual EnemyType getEnemyType() { return _myType; }
 	void setMoveDirection(sf::Vector2f moveDirection);
 	sf::Vector2f getMoveDirection();
+	void setIsServer(bool value) { isServer = value; }
 protected:
 	void updateMovement(float dt);
 	void updateAnimations(float dt) override;
@@ -46,6 +47,7 @@ protected:
 	bool onBreak;
 	bool following;
 	bool attacking;
+	bool isServer;
 	Character* followingTarget;
 	EnemyType _myType;
 	sf::Vector2f currentMoveDirection;

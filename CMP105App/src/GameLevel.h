@@ -22,7 +22,7 @@ public:
 	void spawnInEntities();
 	std::vector<sf::Vector2f> GetPlayerPos();
 	void handleNetwork(float dt);
-	void SyncNetworkPosition(int socketID);
+	void SyncNetworkPosition(NetworkObjectUpdateData updatedObjects);
 	void GetEnemyInfoForClient(int socketID);
 	void SyncNetworkPlayerPositions(std::vector<sf::Vector2f> positions);
 	void PacketUpdatedNetworkObjectData();

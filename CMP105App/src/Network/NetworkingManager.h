@@ -24,8 +24,10 @@ struct NetworkObjectPositionSyncVar
 
 struct NetworkObjectUpdateData
 {
-	sf::Int32 length;
-	NetworkObjectPositionSyncVar* posSyncVars;
+	sf::Int32 playerLength;
+	sf::Int32 enemyLength;
+	NetworkObjectPositionSyncVar* playerPosSyncVars;
+	NetworkObjectPositionSyncVar* enemyPosSyncVars;
 };
 
 static class NetworkingManager
@@ -47,7 +49,7 @@ public:
 	static void CreateLocalPlayer(Input* input, sf::RenderWindow* window, AudioManager* audio);
 	static int FindReadySockets();
 	static sf::Packet RecievePacketOnSocket(int socketID);
-	static sf::Packet RecievePacketOnSocket();
+	static sf::Packet* RecievePacketOnSocket();
 	static void SendPlayerPosResultPacket(std::vector<sf::Vector2f> positions, int socketID);
 	static void SendEnemySpawnInfoResult(EnemyInfo* enemiesInfo, int length, int socketID);
 	static void SendFunctionCall(std::string funcCallName, int socketID = -1);

@@ -10,9 +10,7 @@ Enemy::Enemy(std::string textureName, sf::Vector2f pos, sf::Vector2f size, float
 	currentAttackCooldown = 0.0f;
 	this->weaponDamage = weaponDamage;
 	this->attackRange = attackRange;
-	float randomX = -1 + static_cast<float> (rand() / (static_cast<float>(RAND_MAX / (1 - (-1)))));
-	float randomY = -1 + static_cast<float> (rand() / (static_cast<float>(RAND_MAX / (1 - (-1)))));
-	this->currentMoveDirection = sf::Vector2f(randomX, randomY);
+	this->currentMoveDirection = sf::Vector2f(0.0f, 0.0f);
 }
 
 void Enemy::update(float dt)
@@ -31,28 +29,28 @@ void Enemy::update(float dt)
 				attacking = false;
 		}
 		//If not following a target
-		if (!following)
+		//if (!following)
 			updateMovement(dt);
 		//If not attacking
-		else if (!attacking)
-		{
-			//Grab vector to follow target
-			sf::Vector2f targetVector = VectorHelper::normalise(sf::Vector2f(followingTarget->getPosition().x - getPosition().x, followingTarget->getPosition().y - getPosition().y));
-			moving = true;
-			move(targetVector * speed * dt);
-			lastDirection = targetVector;
-		}
-		//If attacking and cool down as reached 0
-		else if (attacking && currentAttackCooldown <= 0)
-		{
-			attack(followingTarget);
-			currentAttackCooldown = attackCooldown;
-		}
-		//If attack cooldown is greater than 0
-		if (currentAttackCooldown > 0)
-		{
-			currentAttackCooldown -= dt;
-		}
+		//else if (!attacking)
+		//{
+		//	//Grab vector to follow target
+		//	/*sf::Vector2f targetVector = VectorHelper::normalise(sf::Vector2f(followingTarget->getPosition().x - getPosition().x, followingTarget->getPosition().y - getPosition().y));
+		//	moving = true;
+		//	move(targetVector * speed * dt);
+		//	lastDirection = targetVector;*/
+		//}
+		////If attacking and cool down as reached 0
+		//else if (attacking && currentAttackCooldown <= 0)
+		//{
+		//	/*attack(followingTarget);
+		//	currentAttackCooldown = attackCooldown;*/
+		//}
+		////If attack cooldown is greater than 0
+		//if (currentAttackCooldown > 0)
+		//{
+		//	currentAttackCooldown -= dt;
+		//}
 	}
 	updateAnimations(dt);
 }
@@ -67,7 +65,6 @@ void Enemy::updateMovement(float dt)
 	else if (onBreak)
 	{
 		//Get random vector 
-		
 		velocity = currentMoveDirection;
 		currentMoveTimer = moveTimer;
 		//End break
@@ -78,7 +75,7 @@ void Enemy::updateMovement(float dt)
 	if (currentMoveTimer > 0 && !onBreak)
 	{
 		//Move on vector
-		move(velocity * dt);
+		move(velocity * (50.0f * dt));
 		lastDirection = velocity;
 		currentMoveTimer -= dt;
 	}
@@ -89,6 +86,12 @@ void Enemy::updateMovement(float dt)
 		velocity = sf::Vector2f(0, 0);
 		currentMoveTimer = moveTimer;
 		//Start break
+		if (isServer)
+		{
+			float randomX = -1 + static_cast<float> (rand() / (static_cast<float>(RAND_MAX / (1 - (-1)))));
+			float randomY = -1 + static_cast<float> (rand() / (static_cast<float>(RAND_MAX / (1 - (-1)))));
+			currentMoveDirection = sf::Vector2f(randomX, randomY);
+		}
 		onBreak = true;
 		moving = false;
 		currentBreakTimer = breakTimer;
@@ -97,7 +100,7 @@ void Enemy::updateMovement(float dt)
 
 void Enemy::setMoveDirection(sf::Vector2f newMoveDirection)
 {
-	velocity = newMoveDirection * speed;
+	currentMoveDirection = newMoveDirection;
 }
 
 sf::Vector2f Enemy::getMoveDirection()
