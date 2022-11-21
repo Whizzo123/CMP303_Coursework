@@ -108,9 +108,7 @@ void GameLevel::handleNetwork(float dt)
 			std::cout << "Recieved function name is " << functionName << std::endl;
 			//FUNCTION CALLS
 			if (functionName == "GetPlayerPos")
-			{
 				NetworkingManager::SendPlayerPosResultPacket(GetPlayerPos(), socketID);
-			}
 			else if (functionName == "SyncNetworkPosition")
 			{
 				if (NetworkingManager::IsCharacterInitialised(socketID))
@@ -121,15 +119,10 @@ void GameLevel::handleNetwork(float dt)
 				}
 			}
 			else if (functionName == "GetEnemies")
-			{
 				GetEnemyInfoForClient(socketID);
-			}
 		}
 		if (NetworkingManager::IsCharacterInitialised(socketID))
-		{
-			std::cout << "Sending enemy positions" << std::endl;
 			ServerUpdateEnemyPositions();
-		}
 	}
 	else
 	{
@@ -149,13 +142,11 @@ void GameLevel::handleNetwork(float dt)
 			}
 			else if (eventName == "ServerUpdateEnemyPositions")
 			{
-				std::cout << "Calling client event: ServerUpdateEnemyPositions" << std::endl;
 				if (characterManager->getCurrentCharacterCount() > 0)
 				{
 					NetworkObjectUpdateData data;
 					recvPacket >> data;
 					SyncNetworkEnemyPositions(data);
-					std::cout << "Finished ServerUpdateEnemyPositions" << std::endl;
 				}
 			}
 			else if (eventName == "SpawnNetworkedEnemies")
