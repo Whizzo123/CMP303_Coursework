@@ -29,28 +29,28 @@ void Enemy::update(float dt)
 				attacking = false;
 		}
 		//If not following a target
-		//if (!following)
+		if (!following)
 			updateMovement(dt);
 		//If not attacking
-		//else if (!attacking)
-		//{
-		//	//Grab vector to follow target
-		//	/*sf::Vector2f targetVector = VectorHelper::normalise(sf::Vector2f(followingTarget->getPosition().x - getPosition().x, followingTarget->getPosition().y - getPosition().y));
-		//	moving = true;
-		//	move(targetVector * speed * dt);
-		//	lastDirection = targetVector;*/
-		//}
-		////If attacking and cool down as reached 0
-		//else if (attacking && currentAttackCooldown <= 0)
-		//{
-		//	/*attack(followingTarget);
-		//	currentAttackCooldown = attackCooldown;*/
-		//}
-		////If attack cooldown is greater than 0
-		//if (currentAttackCooldown > 0)
-		//{
-		//	currentAttackCooldown -= dt;
-		//}
+		else if (!attacking)
+		{
+			//Grab vector to follow target
+			sf::Vector2f targetVector = VectorHelper::normalise(sf::Vector2f(followingTarget->getPosition().x - getPosition().x, followingTarget->getPosition().y - getPosition().y));
+			moving = true;
+			move(targetVector * speed * dt);
+			lastDirection = targetVector;
+		}
+		//If attacking and cool down as reached 0
+		else if (attacking && currentAttackCooldown <= 0)
+		{
+			attack(followingTarget);
+			currentAttackCooldown = attackCooldown;
+		}
+		//If attack cooldown is greater than 0
+		if (currentAttackCooldown > 0)
+		{
+			currentAttackCooldown -= dt;
+		}
 	}
 	updateAnimations(dt);
 }

@@ -168,3 +168,19 @@ Enemy* CharacterManager::getEnemy(int index)
 {
 	return characters[index];
 }
+
+Player* CharacterManager::getEnemyTarget(int index)
+{
+	return static_cast<Player*>(characters[index]->getFollowingTarget());
+}
+
+std::vector<Player*> CharacterManager::getEnemyFollowingTargets()
+{
+	std::vector<Player*> playerTargets;
+
+	for (int i = 0; i < characters.size(); i++)
+	{
+		playerTargets.push_back(static_cast<Player*>(characters[i]->getFollowingTarget()));
+	}
+	return playerTargets;
+}

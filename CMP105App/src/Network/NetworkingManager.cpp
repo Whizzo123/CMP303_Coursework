@@ -214,6 +214,8 @@ void NetworkingManager::SendUpdatedNetworkData(std::vector<NetworkObject> networ
 	updateData.playerPosSyncVars = syncVars;
 	updateData.enemyPosSyncVars = 0;
 	updateData.enemyLength = 0;
+	updateData.enemyTargetSyncVars = 0;
+	updateData.enemyTargetLength = 0;
 	sf::Packet posSyncPacket;
 	posSyncPacket << "SyncNetworkPosition";
 	posSyncPacket << updateData;
@@ -349,6 +351,11 @@ sf::Packet& operator << (sf::Packet& packet, const NetworkObjectUpdateData& data
 	{
 		packet << data.enemyPosSyncVars[i];
 	}
+	packet << data.enemyTargetLength;
+	for (int i = 0; i < data.enemyTargetLength; i++)
+	{
+		packet << data.enemyTargetSyncVars[i];
+	}
 	return packet;
 }
 sf::Packet& operator >> (sf::Packet& packet, NetworkObjectUpdateData& data)
@@ -368,6 +375,14 @@ sf::Packet& operator >> (sf::Packet& packet, NetworkObjectUpdateData& data)
 		NetworkObjectPositionSyncVar resultPos;
 		packet >> resultPos;
 		data.enemyPosSyncVars[i] = resultPos;
+	}
+	packet >> data.enemyTargetLength;
+	data.enemyTargetSyncVars = new NetworkObjectTargetSyncVar[data.enemyTargetLength];
+	for (int i = 0; i < data.enemyTargetLength; i++)
+	{
+		NetworkObjectTargetSyncVar syncVar;
+		packet >> syncVar;
+		data.enemyTargetSyncVars[i] = syncVar;
 	}
 	return packet;
 }
@@ -416,4 +431,14 @@ sf::Packet& operator >> (sf::Packet& packet, EnemyType& data)
 	packet >> enumIndex;
 	data = static_cast<EnemyType>(enumIndex);
 	return packet;
+}
+
+sf::Packet& operator << (sf::Packet& packet, const NetworkObjectTargetSyncVar data)
+{
+	return packet << data.objectID << data.targetObjectID;
+}
+
+sf::Packet& operator >> (sf::Packet& packet, NetworkObjectTargetSyncVar& data)
+{
+	return packet >> data.objectID >> data.targetObjectID;
 }

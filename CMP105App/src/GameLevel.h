@@ -16,10 +16,8 @@ public:
 	void handleInput(float dt) override;
 	void render() override;
 	void switchToLevel() override;
-	void spawnInEntities(EnemyInfo* info, int enemyInfoLength);
 	std::vector<Enemy*> getEnemies() { return characterManager->getAllCharacters(); }
 	int getNumOfEnemies() { return characterManager->getCurrentCharacterCount(); }
-	void spawnInEntities();
 	std::vector<sf::Vector2f> GetPlayerPos();
 	void handleNetwork(float dt);
 	void SyncNetworkPosition(NetworkObjectUpdateData updatedObjects);
@@ -30,6 +28,8 @@ public:
 	void SpawnNetworkedEnemies(EnemySpawnInfoResult result);
 	void ServerUpdateEnemyPositions();
 	void SyncNetworkEnemyPositions(NetworkObjectUpdateData data);
+	int GetIndexForPlayer(Player* player);
+	Player* GetPlayerFromIndex(int playerID);
 protected:
 	
 protected:

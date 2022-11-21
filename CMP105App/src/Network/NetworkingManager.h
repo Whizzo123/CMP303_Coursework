@@ -22,12 +22,20 @@ struct NetworkObjectPositionSyncVar
 	sf::Vector2f newPosition;
 };
 
+struct NetworkObjectTargetSyncVar
+{
+	sf::Int32 objectID;
+	sf::Int32 targetObjectID;
+};
+
 struct NetworkObjectUpdateData
 {
 	sf::Int32 playerLength;
 	sf::Int32 enemyLength;
+	sf::Int32 enemyTargetLength;
 	NetworkObjectPositionSyncVar* playerPosSyncVars;
 	NetworkObjectPositionSyncVar* enemyPosSyncVars;
+	NetworkObjectTargetSyncVar* enemyTargetSyncVars;
 };
 
 static class NetworkingManager
@@ -121,5 +129,7 @@ sf::Packet& operator << (sf::Packet& packet, const EnemyInfo& data);
 sf::Packet& operator >> (sf::Packet& packet, EnemyInfo& data);
 sf::Packet& operator << (sf::Packet& packet, const EnemyType& data);
 sf::Packet& operator >> (sf::Packet& packet, EnemyType& data);
+sf::Packet& operator << (sf::Packet& packet, const NetworkObjectTargetSyncVar data);
+sf::Packet& operator >> (sf::Packet& packet, NetworkObjectTargetSyncVar& data);
 
 

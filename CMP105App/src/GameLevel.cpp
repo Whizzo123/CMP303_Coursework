@@ -42,17 +42,6 @@ void GameLevel::handleInput(float dt)
 	}
 }
 
-void GameLevel::spawnInEntities()
-{
-	dungeonExit = new DungeonExit(map->getSpawnableTiles().back(), &nextLevel, levelIndex);
-	chestManager->spawn(map, window, input, _numberOfChests);
-}
-
-void GameLevel::spawnInEntities(EnemyInfo* info, int enemyInfoLength)
-{
-	characterManager->spawnNetworkEnemies(info, enemyInfoLength);
-}
-
 void GameLevel::update(float dt)
 {
 	if (currentNetworkTickTime > 0.1f)
@@ -281,13 +270,24 @@ void GameLevel::ServerUpdateEnemyPositions()
 		NetworkObjectPositionSyncVar syncVar;
 		syncVar.objectID = i;
 		syncVar.newPosition = enemyPositions[i];
-		std::cout << "Enemy Patrol Pos: " << syncVar.newPosition.x << "," << syncVar.newPosition.y << std::endl;
 		syncVars[i] = syncVar;
+	}
+	std::vector<Player*> enemyTargets = characterManager->getEnemyFollowingTargets();
+	int targetLength = enemyTargets.size();
+	NetworkObjectTargetSyncVar* targetSyncVars = new NetworkObjectTargetSyncVar[targetLength];
+	for (int i = 0; i < targetLength; i++)
+	{
+		NetworkObjectTargetSyncVar syncVar;
+		syncVar.objectID = i;
+		syncVar.targetObjectID = GetIndexForPlayer(enemyTargets[i]);
+		targetSyncVars[i] = syncVar;
 	}
 	NetworkObjectUpdateData data;
 	data.enemyLength = length;
+	data.enemyTargetLength = targetLength;
 	data.playerLength = 0;
 	data.enemyPosSyncVars = syncVars;
+	data.enemyTargetSyncVars = targetSyncVars;
 	data.playerPosSyncVars = 0;
 	// Call client-side function
 	for (int i = 1; i < NetworkingManager::GetNumConnections(); i++)
@@ -337,15 +337,49 @@ std::vector<NetworkObject> GameLevel::GetUpdatedNetworkObjects()
 
 void GameLevel::SpawnNetworkedEnemies(EnemySpawnInfoResult result)
 {
-	spawnInEntities(result.enemiesInfo, result.length);
+	characterManager->spawnNetworkEnemies(result.enemiesInfo, result.length);
 }
 
 void GameLevel::SyncNetworkEnemyPositions(NetworkObjectUpdateData data)
 {
 	NetworkObjectPositionSyncVar* syncVars = data.enemyPosSyncVars;
+	NetworkObjectTargetSyncVar* targetSyncVars = data.enemyTargetSyncVars;
 	for (int i = 0; i < data.enemyLength; i++)
 	{
-		std::cout << "Client enemyPos " << i << ": " << syncVars[i].newPosition.x << "," << syncVars[i].newPosition.y << std::endl;
 		characterManager->getEnemy(i)->setMoveDirection(syncVars[i].newPosition);
 	}
+	for (int i = 0; i < data.enemyTargetLength; i++)
+	{
+		characterManager->getEnemy(targetSyncVars[i].objectID)
+			->setFollowingTarget(GetPlayerFromIndex(targetSyncVars[i].targetObjectID));
+	}
+	
+}
+
+int GameLevel::GetIndexForPlayer(Player* player)
+{
+	if (player)
+	{
+		std::map<int, Player*>::iterator it;
+		for (it = _otherPlayers.begin(); it != _otherPlayers.end(); it++)
+		{
+			if (it->second == player)
+				return it->first;
+		}
+	}
+	else
+		return -1;
+}
+
+Player* GameLevel::GetPlayerFromIndex(int playerID)
+{
+	if (playerID == -1)
+		return player;
+	std::map<int, Player*>::iterator it;
+	for (it = _otherPlayers.begin(); it != _otherPlayers.end(); it++)
+	{
+		if (it->first == playerID)
+			return it->second;
+	}
+	return nullptr;
 }
