@@ -27,8 +27,8 @@ public:
 	int getNextLevel();
 	virtual void switchToLevel() {};
 	void setNextLevel(int levelNumber) { nextLevel = levelNumber; };
-	void setPlayer(Player* player) { this->player = player; }
+	//void setPlayer(Player* player) { this->player = player; }
 protected:
 	int nextLevel;
-	Player* player;
+	//Player* player;
 };

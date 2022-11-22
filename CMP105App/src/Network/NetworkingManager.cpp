@@ -11,7 +11,7 @@ MListener* NetworkingManager::_listener = 0;
 MSocket* NetworkingManager::_mySocket = 0;
 MSocketSelector* NetworkingManager::_selector = 0;
 int NetworkingManager::_myConnectionIndex = 0;
-Player* NetworkingManager::localPlayer = nullptr;
+//Player* NetworkingManager::localPlayer = nullptr;
 std::map<int, bool> NetworkingManager::changeStateOfNetworkObjects = std::map<int, bool>();
 std::vector<NetworkObject*> NetworkingManager::networkObjects = std::vector<NetworkObject*>();
 std::map<int, NetworkObject*> NetworkingManager::_playerNetworkObjects = std::map<int, NetworkObject*>();
@@ -32,8 +32,7 @@ bool NetworkingManager::StartServer(Input* input, sf::RenderWindow* window, Audi
 	_listener = new MListener(port);
 	_selector = new MSocketSelector();
 	_listener->listen();
-	std::cout << "Listening" << std::endl;
-	CreateLocalPlayer(input, window, audioManager);
+	CreateLocalPlayer(0, input, window, audioManager);
 	MSocket* clientSocket = _listener->accept();
 	// Add client to NetworkConnections
 	_connections[_connectionIndex] = new NetworkConnection(_connectionIndex, clientSocket);
@@ -43,7 +42,6 @@ bool NetworkingManager::StartServer(Input* input, sf::RenderWindow* window, Audi
 	_players[_connectionIndex] = new Player("Dwarf_V2", spawnPos, sf::Vector2f(100, 100), 200.0f, nullptr, window, audioManager, 10.0f);
 	_playerNetworkObjects[_connectionIndex] = new NetworkObject(_connectionIndex, false);
 	socketIDToCharacterInitialised[_connectionIndex] = false;
-	std::cout << "Client connected" << std::endl;
 	// Send the client a welcome connection
 	sf::Packet sendPacket;
 	sendPacket << sf::String("Hello this is the server!!!");
@@ -71,17 +69,14 @@ bool NetworkingManager::StartClient(Input* input, sf::RenderWindow* window, Audi
 	_mySocket->recieve(recievePacket);
 	sf::String recievedStringData;
 	recievePacket >> recievedStringData;
-	std::cout << "Recieved data" << recievedStringData.toAnsiString() << std::endl;
 	sf::Packet connectionIndexRecvPacket;
 	_mySocket->recieve(connectionIndexRecvPacket);
 	connectionIndexRecvPacket >> _myConnectionIndex;
-	std::cout << "Connection index" << _myConnectionIndex << std::endl;
-	CreateLocalPlayer(input, window, audioManager);
+	CreateLocalPlayer(_myConnectionIndex, input, window, audioManager);
 	SendFunctionCall("GetPlayerPos");
 	// TODO create simpler method of dealing with unneccessary functionCall
 	sf::Packet* packet = RecievePacketOnSocket();
 	sf::Packet posResultPacket = *packet;
-	std::cout << "Recieved player pos" << std::endl;
 	PlayerPosResult results;
 	std::string discardFuncCall;
 	posResultPacket >> discardFuncCall;
@@ -98,30 +93,14 @@ bool NetworkingManager::StartClient(Input* input, sf::RenderWindow* window, Audi
 		else
 		{
 			sf::Vector2f spawnPos = results.resultPositions[i];
-			localPlayer->setPosition(spawnPos);
-			networkObjects.push_back(new NetworkObject());
+			_players[i]->setPosition(spawnPos);
+			_playerNetworkObjects[i] = new NetworkObject(i, true);
+			networkObjects.push_back(_playerNetworkObjects[i]);
 		}
 	}
 	_mySocket->setBlocking(false);
 	_clientStarted = true;
 	return true;
-}
-
-
-sf::Packet  NetworkingManager::CallServer(sf::String funcName)
-{
-	// Call this function on server-side
-	std::cout << "Sending call to server" << std::endl;
-	FunctionName name;
-	name.funcName = funcName;
-	sf::Packet funcCallPacket;
-	funcCallPacket << name;
-	_mySocket->send(funcCallPacket);
-	// Await function results
-	sf::Packet recvPacket;
-	_mySocket->recieve(recvPacket);
-	std::cout << "Receiving result from server" << std::endl;
-	return recvPacket;
 }
 
 int NetworkingManager::FindReadySockets()
@@ -157,10 +136,6 @@ void NetworkingManager::SendPlayerPosResultPacket(std::vector<sf::Vector2f> posi
 	result.resultPositions = positions;
 	sendPacket << "SyncNetworkPlayerPositions";
 	sendPacket << result;
-	/*if (NetworkingManager::IsCharacterInitialised(socketID))
-	{
-		SendFunctionCall("SyncNetworkPlayerPositions", socketID);
-	}*/
 	_connections[socketID]->getConnectionSocket()->send(sendPacket);
 }
 
@@ -192,31 +167,24 @@ void NetworkingManager::SendFunctionCall(std::string funcCallName, int socketID)
 	}
 }
 // TODO make this one thing or something like that
-void NetworkingManager::SendUpdatedNetworkData(std::vector<NetworkObject> networkObjects, Player* localPlayer)
+void NetworkingManager::SendUpdatedNetworkData(std::vector<NetworkObject> networkObjects)
 {
 	NetworkObjectUpdateData updateData;
-	int updateArrayLength = networkObjects.size() + 1;
+	int updateArrayLength = networkObjects.size();
 	updateData.playerLength = updateArrayLength;
 	NetworkObjectPositionSyncVar* syncVars = new NetworkObjectPositionSyncVar[updateArrayLength];
-	for (int i = 0; i < updateData.playerLength - 1; i++)
+	for (int i = 0; i < updateData.playerLength; i++)
 	{
 		NetworkObjectPositionSyncVar var;
 		var.objectID = networkObjects[i].GetID();
 		var.newPosition = networkObjects[i].getPosition();
 		syncVars[i] = var;
 	}
-	// Add on local player position
-	NetworkObjectPositionSyncVar posSyncVar;
-	posSyncVar.objectID = NetworkingManager::GetMyConnectionIndex();
-	posSyncVar.newPosition = localPlayer->getPosition();
-	syncVars[updateArrayLength - 1] = posSyncVar;
 	// Set Update Data to point to sync vars
 	updateData.playerPosSyncVars = syncVars;
-	updateData.enemyPosSyncVars = 0;
-	updateData.enemyLength = 0;
-	updateData.enemyTargetSyncVars = 0;
-	updateData.enemyTargetLength = 0;
 	sf::Packet posSyncPacket;
+	updateData.enemyNetworkObjects = 0;
+	updateData.enemyLength = 0;
 	posSyncPacket << "SyncNetworkPosition";
 	posSyncPacket << updateData;
 	_mySocket->send(posSyncPacket);
@@ -243,16 +211,16 @@ void NetworkingManager::SendUpdatedNetworkData(std::string eventCall, NetworkObj
 	}
 }
 
-void NetworkingManager::CreateLocalPlayer(Input* input, sf::RenderWindow* window, AudioManager* audio)
+void NetworkingManager::CreateLocalPlayer(int index, Input* input, sf::RenderWindow* window, AudioManager* audio)
 {
-	localPlayer = new Player("Dwarf_V2", sf::Vector2f(300, 275), sf::Vector2f(100, 100), 200.0f, input, window, audio, 10.0f);
+	_players[index] = new Player("Dwarf_V2", sf::Vector2f(300, 275), sf::Vector2f(100, 100), 200.0f, input, window, audio, 10.0f);
 	Inventory* inventory = new Inventory(window, input);
 	inventory->addToSlot(10, new Weapon("Axe of Grimoth", 1, 1, 1.5));
 	inventory->addToSlot(0, new Armour("Helmet of Valor", 1, 1, HEAD));
 	inventory->addToSlot(1, new Armour("Mail of Fire", 1, 2, CHEST));
 	inventory->addToSlot(2, new Armour("Legs of Speed", 1, 1, LEGS));
 	inventory->addToSlot(3, new Armour("Skeleton Boots", 1, 1, FEET));
-	localPlayer->setInventory(inventory);
+	_players[index]->setInventory(inventory);
 }
 
 bool NetworkingManager::JoinServer()
@@ -349,12 +317,7 @@ sf::Packet& operator << (sf::Packet& packet, const NetworkObjectUpdateData& data
 	packet << data.enemyLength;
 	for (int i = 0; i < data.enemyLength; i++)
 	{
-		packet << data.enemyPosSyncVars[i];
-	}
-	packet << data.enemyTargetLength;
-	for (int i = 0; i < data.enemyTargetLength; i++)
-	{
-		packet << data.enemyTargetSyncVars[i];
+		packet << data.enemyNetworkObjects[i];
 	}
 	return packet;
 }
@@ -369,20 +332,12 @@ sf::Packet& operator >> (sf::Packet& packet, NetworkObjectUpdateData& data)
 		data.playerPosSyncVars[i] = resultPos;
 	}
 	packet >> data.enemyLength;
-	data.enemyPosSyncVars = new NetworkObjectPositionSyncVar[data.enemyLength];
+	data.enemyNetworkObjects = new EnemyNetworkObject[data.enemyLength];
 	for (int i = 0; i < data.enemyLength; i++)
 	{
-		NetworkObjectPositionSyncVar resultPos;
-		packet >> resultPos;
-		data.enemyPosSyncVars[i] = resultPos;
-	}
-	packet >> data.enemyTargetLength;
-	data.enemyTargetSyncVars = new NetworkObjectTargetSyncVar[data.enemyTargetLength];
-	for (int i = 0; i < data.enemyTargetLength; i++)
-	{
-		NetworkObjectTargetSyncVar syncVar;
-		packet >> syncVar;
-		data.enemyTargetSyncVars[i] = syncVar;
+		EnemyNetworkObject enemy;
+		packet >> enemy;
+		data.enemyNetworkObjects[i] = enemy;
 	}
 	return packet;
 }
@@ -441,4 +396,14 @@ sf::Packet& operator << (sf::Packet& packet, const NetworkObjectTargetSyncVar da
 sf::Packet& operator >> (sf::Packet& packet, NetworkObjectTargetSyncVar& data)
 {
 	return packet >> data.objectID >> data.targetObjectID;
+}
+
+sf::Packet& operator << (sf::Packet& packet, const EnemyNetworkObject data)
+{
+	return packet << data.objectID << data.position << data.velocity << data.targetedPlayerID;
+}
+
+sf::Packet& operator >> (sf::Packet& packet, EnemyNetworkObject& data)
+{
+	return packet >> data.objectID >> data.position >> data.velocity >> data.targetedPlayerID;
 }

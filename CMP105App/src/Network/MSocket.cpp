@@ -82,8 +82,7 @@ bool MSocket::send(std::string data)
 		std::cout << "ERROR: Socket send error" << status << std::endl;
 		return false;
 	}
-	else
-		std::cout << status << std::endl;
+
 	return true;
 }
 
@@ -95,8 +94,6 @@ bool MSocket::send(sf::Packet packet)
 		std::cout << "ERROR: Socket send error" << status << std::endl;
 		return false;
 	}
-	else
-		std::cout << status << std::endl;
 	return true;
 }
 

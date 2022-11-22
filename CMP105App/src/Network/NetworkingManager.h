@@ -28,21 +28,24 @@ struct NetworkObjectTargetSyncVar
 	sf::Int32 targetObjectID;
 };
 
+struct EnemyNetworkObject
+{
+	sf::Int32 objectID;
+	sf::Vector2f position;
+	sf::Vector2f velocity;
+	sf::Int32 targetedPlayerID;
+};
+
 struct NetworkObjectUpdateData
 {
 	sf::Int32 playerLength;
 	sf::Int32 enemyLength;
-	sf::Int32 enemyTargetLength;
 	NetworkObjectPositionSyncVar* playerPosSyncVars;
-	NetworkObjectPositionSyncVar* enemyPosSyncVars;
-	NetworkObjectTargetSyncVar* enemyTargetSyncVars;
+	EnemyNetworkObject* enemyNetworkObjects;
 };
 
 static class NetworkingManager
 {
-
-
-
 public:
 	static bool Find();
 	static bool StartServer(Input* input, sf::RenderWindow* window, AudioManager* audioManager);
@@ -51,17 +54,16 @@ public:
 	static bool isServer();
 	static bool isClientStarted();
 	static bool isServerStarted();
-	static sf::Packet CallServer(sf::String funcName);
 	static std::map<int, Player*> GetNetworkPlayers();
 	static void AddNetworkObject(NetworkObject* object);
-	static void CreateLocalPlayer(Input* input, sf::RenderWindow* window, AudioManager* audio);
+	static void CreateLocalPlayer(int index, Input* input, sf::RenderWindow* window, AudioManager* audio);
 	static int FindReadySockets();
 	static sf::Packet RecievePacketOnSocket(int socketID);
 	static sf::Packet* RecievePacketOnSocket();
 	static void SendPlayerPosResultPacket(std::vector<sf::Vector2f> positions, int socketID);
 	static void SendEnemySpawnInfoResult(EnemyInfo* enemiesInfo, int length, int socketID);
 	static void SendFunctionCall(std::string funcCallName, int socketID = -1);
-	static void SendUpdatedNetworkData(std::vector<NetworkObject> networkObjects, Player* localPlayer);
+	static void SendUpdatedNetworkData(std::vector<NetworkObject> networkObjects);
 	static void SendUpdatedNetworkData(std::string eventCall, NetworkObjectUpdateData data, int socketID = -1);
 	static int GetNumConnections() { return _connectionIndex; }
 	static int GetMyConnectionIndex() { return _myConnectionIndex; }
@@ -74,7 +76,7 @@ public:
 
 	static const unsigned short port = 4444;
 	static const int numberOfConnectionsAllowed = 2;
-	static Player* localPlayer;
+	//static Player* localPlayer;
 	
 
 private:
@@ -131,5 +133,7 @@ sf::Packet& operator << (sf::Packet& packet, const EnemyType& data);
 sf::Packet& operator >> (sf::Packet& packet, EnemyType& data);
 sf::Packet& operator << (sf::Packet& packet, const NetworkObjectTargetSyncVar data);
 sf::Packet& operator >> (sf::Packet& packet, NetworkObjectTargetSyncVar& data);
+sf::Packet& operator << (sf::Packet& packet, const EnemyNetworkObject data);
+sf::Packet& operator >> (sf::Packet& packet, EnemyNetworkObject& data);
 
 

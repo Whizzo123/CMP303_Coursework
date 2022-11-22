@@ -4,7 +4,7 @@ GameLevel::GameLevel(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioMana
 	int levelIndex, int numberOfEnemies, int numberOfChests, std::vector<int>* mapData, sf::Vector2u mapDimensions) : Level(hwnd, in, gs, aud)
 {
 	//Initialize variables
-	this->player = player;
+	//this->player = player;
 	this->levelIndex = levelIndex;
 	inventoryManager = new InventoryManager();
 	dragController = new DragController(input, inventoryManager, window);
@@ -37,7 +37,10 @@ void GameLevel::handleInput(float dt)
 	//Handle player and cursor input
 	if (gameState->getCurrentState() != State::PAUSE)
 	{
-		player->handleInput(dt);
+		for (auto player : _players)
+		{
+			player.second->handleInput(dt);
+		}
 		cursor->handleInput();
 	}
 }
@@ -66,15 +69,14 @@ void GameLevel::update(float dt)
 	if (gameState->getCurrentState() != State::PAUSE)
 	{
 		//Check for map collisions
-		map->collisionCheck(player);
-		//Update characters and player
-		characterManager->update(dt, map, player);
-		player->update(dt);
-		for (auto player : _otherPlayers)
+		for (auto player : _players)
 		{
+			map->collisionCheck(player.second);
+			//Update characters and player
+			characterManager->update(dt, map, player.second);
 			player.second->update(dt);
+			player.second->setEnemyTarget(characterManager->checkCollisions(player.second->getAttackRect()));
 		}
-		player->setEnemyTarget(characterManager->checkCollisions(player->getAttackRect()));
 		background->update(dt);
 		inventoryManager->update(dt);
 		dragController->update(dt);
@@ -85,9 +87,10 @@ void GameLevel::update(float dt)
 
 void GameLevel::handleNetwork(float dt)
 {
-	// Use selector to see if any sockets have sent data to be used
+	// Check whether we are the server or a client
 	if (NetworkingManager::isServer())
 	{
+		// Are there any ready sockets?
 		int socketID = NetworkingManager::FindReadySockets();
 		if (socketID != -1)
 		{
@@ -101,11 +104,7 @@ void GameLevel::handleNetwork(float dt)
 			else if (functionName == "SyncNetworkPosition")
 			{
 				if (NetworkingManager::IsCharacterInitialised(socketID))
-				{
-					NetworkObjectUpdateData data;
-					recievePacket >> data;
-					SyncNetworkPosition(data);
-				}
+					SyncNetworkPosition(recievePacket);
 			}
 			else if (functionName == "GetEnemies")
 				GetEnemyInfoForClient(socketID);
@@ -117,33 +116,20 @@ void GameLevel::handleNetwork(float dt)
 	{
 		//Handle any requested events from server
 		sf::Packet* packet = NetworkingManager::RecievePacketOnSocket();
-		
 		while (packet)
 		{
 			sf::Packet recvPacket = *packet;
 			std::string eventName;
 			recvPacket >> eventName;
 			if (eventName == "SyncNetworkPlayerPositions")
-			{
-				PlayerPosResult result;
-				recvPacket >> result;
-				SyncNetworkPlayerPositions(result.resultPositions);
-			}
+				SyncNetworkPlayerPositions(recvPacket);
 			else if (eventName == "ServerUpdateEnemyPositions")
 			{
 				if (characterManager->getCurrentCharacterCount() > 0)
-				{
-					NetworkObjectUpdateData data;
-					recvPacket >> data;
-					SyncNetworkEnemyPositions(data);
-				}
+					SyncNetworkEnemyPositions(recvPacket);
 			}
 			else if (eventName == "SpawnNetworkedEnemies")
-			{
-				EnemySpawnInfoResult result;
-				recvPacket >> result;
-				SpawnNetworkedEnemies(result);
-			}
+				SpawnNetworkedEnemies(recvPacket);
 			else
 			{
 				std::string call = eventName;
@@ -168,15 +154,14 @@ void GameLevel::render()
 	chestManager->draw(window);
 	//window->draw(*dungeonExit);
 	characterManager->draw(window);
-	player->drawDebugInfo();
-	for (auto networkPlayer : _otherPlayers)
+	//player.second->drawDebugInfo();
+	for (auto networkPlayer : _players)
 	{
-		window->draw(*networkPlayer.second);
-	}
-	if (player->isAlive())
-	{
-		window->draw(*player);
-		player->drawStatIndicator(window);
+		if (networkPlayer.second->isAlive())
+		{
+			window->draw(*networkPlayer.second);
+			networkPlayer.second->drawStatIndicator(window);
+		}
 	}
 	inventoryManager->draw(window);
 	healthUI->draw();
@@ -191,23 +176,19 @@ void GameLevel::render()
 
 void GameLevel::switchToLevel()
 {
-	setPlayer(NetworkingManager::localPlayer);
-	_otherPlayers = NetworkingManager::GetNetworkPlayers();
-	inventoryManager->addToInventories(player->getInventory());
-	healthUI = new HealthUI(player, window, sf::Vector2f(window->getSize().x - 150.0f, window->getSize().y - 40.0f));
-	cursor = new Cursor(window, inventoryManager, input, player);
-	background = new Background(window, player);
-	player->setChestManager(chestManager);
-	player->setDungeonExit(dungeonExit);
-	player->setNextLevel(&nextLevel);
+	//setPlayer(NetworkingManager::localPlayer);
+	_players = NetworkingManager::GetNetworkPlayers();
+	inventoryManager->addToInventories(_players[NetworkingManager::GetMyConnectionIndex()]->getInventory());
+	healthUI = new HealthUI(_players[NetworkingManager::GetMyConnectionIndex()], window, sf::Vector2f(window->getSize().x - 150.0f, window->getSize().y - 40.0f));
+	cursor = new Cursor(window, inventoryManager, input, _players[NetworkingManager::GetMyConnectionIndex()]);
+	background = new Background(window, _players[NetworkingManager::GetMyConnectionIndex()]);
+	_players[NetworkingManager::GetMyConnectionIndex()]->setChestManager(chestManager);
+	_players[NetworkingManager::GetMyConnectionIndex()]->setDungeonExit(dungeonExit);
+	_players[NetworkingManager::GetMyConnectionIndex()]->setNextLevel(&nextLevel);
 	if (NetworkingManager::isServer())
-	{
 		characterManager->spawnAllCharacters();
-	}
 	else
-	{
 		NetworkingManager::SendFunctionCall("GetEnemies");
-	}
 }
 
 
@@ -220,18 +201,19 @@ void GameLevel::switchToLevel()
 std::vector<sf::Vector2f> GameLevel::GetPlayerPos()
 {
 	std::vector<sf::Vector2f> positions;
-	positions.push_back(player->getPosition());
-	for (auto player : _otherPlayers)
+	for (auto player : _players)
 	{
 		positions.push_back(player.second->getPosition());
 	}
 	return positions;
 }
 
-void GameLevel::SyncNetworkPosition(NetworkObjectUpdateData updatedObjects)
+void GameLevel::SyncNetworkPosition(sf::Packet packet)
 {
+	NetworkObjectUpdateData updatedObjects;
+	packet >> updatedObjects;
 	for (int i = 0; i < updatedObjects.playerLength; i++)
-		_otherPlayers[updatedObjects.playerPosSyncVars[i].objectID]->setPosition(updatedObjects.playerPosSyncVars[i].newPosition);
+		_players[updatedObjects.playerPosSyncVars[i].objectID]->setPosition(updatedObjects.playerPosSyncVars[i].newPosition);
 	for (int i = 1; i < NetworkingManager::GetNumConnections(); i++)
 	{
 		std::vector<sf::Vector2f> playerPositions = GetPlayerPos();
@@ -262,32 +244,24 @@ void GameLevel::GetEnemyInfoForClient(int socketID)
 void GameLevel::ServerUpdateEnemyPositions()
 {
 	// Grab all target positions of enemies
-	std::vector<sf::Vector2f> enemyPositions = characterManager->getEnemyTargetPositions();
-	int length = enemyPositions.size();
-	NetworkObjectPositionSyncVar* syncVars = new NetworkObjectPositionSyncVar[length];
+	std::vector<sf::Vector2f> enemyTargetPositions = characterManager->getEnemyTargetPositions();
+	std::vector<sf::Vector2f> enemyPositions = characterManager->getEnemyPositions();
+	std::vector<Player*> enemyTargets = characterManager->getEnemyFollowingTargets();
+	int length = enemyTargetPositions.size();
+	EnemyNetworkObject* enemyNetworkObjects = new EnemyNetworkObject[length];
 	for (int i = 0; i < length; i++)
 	{
-		NetworkObjectPositionSyncVar syncVar;
-		syncVar.objectID = i;
-		syncVar.newPosition = enemyPositions[i];
-		syncVars[i] = syncVar;
-	}
-	std::vector<Player*> enemyTargets = characterManager->getEnemyFollowingTargets();
-	int targetLength = enemyTargets.size();
-	NetworkObjectTargetSyncVar* targetSyncVars = new NetworkObjectTargetSyncVar[targetLength];
-	for (int i = 0; i < targetLength; i++)
-	{
-		NetworkObjectTargetSyncVar syncVar;
-		syncVar.objectID = i;
-		syncVar.targetObjectID = GetIndexForPlayer(enemyTargets[i]);
-		targetSyncVars[i] = syncVar;
+		EnemyNetworkObject enemy;
+		enemy.objectID = i;
+		enemy.position = enemyPositions[i];
+		enemy.velocity = enemyTargetPositions[i];
+		enemy.targetedPlayerID = GetIndexForPlayer(enemyTargets[i]);
+		enemyNetworkObjects[i] = enemy;
 	}
 	NetworkObjectUpdateData data;
 	data.enemyLength = length;
-	data.enemyTargetLength = targetLength;
+	data.enemyNetworkObjects = enemyNetworkObjects;
 	data.playerLength = 0;
-	data.enemyPosSyncVars = syncVars;
-	data.enemyTargetSyncVars = targetSyncVars;
 	data.playerPosSyncVars = 0;
 	// Call client-side function
 	for (int i = 1; i < NetworkingManager::GetNumConnections(); i++)
@@ -298,62 +272,58 @@ void GameLevel::ServerUpdateEnemyPositions()
 }
 
 ///CLIENT FUNCTIONS////////////////////////////////////////////////
-void GameLevel::SyncNetworkPlayerPositions(std::vector<sf::Vector2f> positions)
+void GameLevel::SyncNetworkPlayerPositions(sf::Packet packet)
 {
-	for (int i = 0; i < positions.size(); i++)
+	PlayerPosResult result;
+	packet >> result;
+	for (int i = 0; i < result.resultPositions.size(); i++)
 	{
-		sf::Vector2f pos = positions[i];
+		sf::Vector2f pos = result.resultPositions[i];
 		if (i != NetworkingManager::GetMyConnectionIndex())
-		{
-			_otherPlayers[i]->setPosition(pos);
-		}
+			_players[i]->setPosition(pos);
 	}
 }
 
 void GameLevel::PacketUpdatedNetworkObjectData()
 {
 	// Pass parameters
-	NetworkingManager::SendUpdatedNetworkData(GetUpdatedNetworkObjects(), player);
+	NetworkingManager::SendUpdatedNetworkData(GetUpdatedNetworkObjects());
 }
 
 //TODO this won't work players are no longer network objects 
 std::vector<NetworkObject> GameLevel::GetUpdatedNetworkObjects()
 {
 	std::vector<NetworkObject> changedObjects;
-	int index = 0;
-	// Loop through the map of networkObject states
-	for (auto objectID : NetworkingManager::GetNObjectChangeState())
+	for (auto nObject : NetworkingManager::GetPlayerNetworkObjects())
 	{
-		// If this object is recorded as having changed
-		if (objectID.second == true)
+		if (nObject.second->canUpdate())
 		{
-			NetworkObject* nObject = NetworkingManager::GetPlayerNetworkObjects().at(objectID.first);
-			changedObjects.push_back(*nObject);
-			index++;
+			nObject.second->setPosition(_players[nObject.first]->getPosition());
+			changedObjects.push_back(*nObject.second);
 		}
 	}
 	return changedObjects;
 }
 
-void GameLevel::SpawnNetworkedEnemies(EnemySpawnInfoResult result)
+void GameLevel::SpawnNetworkedEnemies(sf::Packet packet)
 {
+	EnemySpawnInfoResult result;
+	packet >> result;
 	characterManager->spawnNetworkEnemies(result.enemiesInfo, result.length);
 }
 
-void GameLevel::SyncNetworkEnemyPositions(NetworkObjectUpdateData data)
+void GameLevel::SyncNetworkEnemyPositions(sf::Packet packet)
 {
-	NetworkObjectPositionSyncVar* syncVars = data.enemyPosSyncVars;
-	NetworkObjectTargetSyncVar* targetSyncVars = data.enemyTargetSyncVars;
+	NetworkObjectUpdateData data;
+	packet >> data;
+	EnemyNetworkObject* enemyNetworkObjects = data.enemyNetworkObjects;
 	for (int i = 0; i < data.enemyLength; i++)
 	{
-		characterManager->getEnemy(i)->setMoveDirection(syncVars[i].newPosition);
+		EnemyNetworkObject enemy = enemyNetworkObjects[i];
+		characterManager->getEnemy(i)->setMoveDirection(enemy.velocity);
+		characterManager->getEnemy(i)->setPosition(enemy.position);
+		characterManager->getEnemy(i)->setFollowingTarget(GetPlayerFromIndex(enemy.targetedPlayerID));
 	}
-	for (int i = 0; i < data.enemyTargetLength; i++)
-	{
-		characterManager->getEnemy(targetSyncVars[i].objectID)
-			->setFollowingTarget(GetPlayerFromIndex(targetSyncVars[i].targetObjectID));
-	}
-	
 }
 
 int GameLevel::GetIndexForPlayer(Player* player)
@@ -361,22 +331,19 @@ int GameLevel::GetIndexForPlayer(Player* player)
 	if (player)
 	{
 		std::map<int, Player*>::iterator it;
-		for (it = _otherPlayers.begin(); it != _otherPlayers.end(); it++)
+		for (it = _players.begin(); it != _players.end(); it++)
 		{
 			if (it->second == player)
 				return it->first;
 		}
 	}
-	else
-		return -1;
+	return -1;		
 }
 
 Player* GameLevel::GetPlayerFromIndex(int playerID)
 {
-	if (playerID == -1)
-		return player;
 	std::map<int, Player*>::iterator it;
-	for (it = _otherPlayers.begin(); it != _otherPlayers.end(); it++)
+	for (it = _players.begin(); it != _players.end(); it++)
 	{
 		if (it->first == playerID)
 			return it->second;

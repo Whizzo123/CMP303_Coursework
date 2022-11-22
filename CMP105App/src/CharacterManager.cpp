@@ -184,3 +184,14 @@ std::vector<Player*> CharacterManager::getEnemyFollowingTargets()
 	}
 	return playerTargets;
 }
+
+std::vector<sf::Vector2f> CharacterManager::getEnemyPositions()
+{
+	std::vector<sf::Vector2f> positions;
+
+	for (int i = 0; i < characters.size(); i++)
+	{
+		positions.push_back(characters[i]->getPosition());
+	}
+	return positions;
+}

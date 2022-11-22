@@ -13,6 +13,7 @@ public:
 	virtual void Start();
 	
 	int GetID() { return objectID; }
+	bool canUpdate() { return canClientUpdate; }
 
 protected:
 	sf::Vector2f nposition;

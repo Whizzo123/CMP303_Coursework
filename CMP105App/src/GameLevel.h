@@ -20,14 +20,14 @@ public:
 	int getNumOfEnemies() { return characterManager->getCurrentCharacterCount(); }
 	std::vector<sf::Vector2f> GetPlayerPos();
 	void handleNetwork(float dt);
-	void SyncNetworkPosition(NetworkObjectUpdateData updatedObjects);
+	void SyncNetworkPosition(sf::Packet packet);
 	void GetEnemyInfoForClient(int socketID);
-	void SyncNetworkPlayerPositions(std::vector<sf::Vector2f> positions);
+	void SyncNetworkPlayerPositions(sf::Packet packet);
 	void PacketUpdatedNetworkObjectData();
 	std::vector<NetworkObject> GetUpdatedNetworkObjects();
-	void SpawnNetworkedEnemies(EnemySpawnInfoResult result);
+	void SpawnNetworkedEnemies(sf::Packet packet);
 	void ServerUpdateEnemyPositions();
-	void SyncNetworkEnemyPositions(NetworkObjectUpdateData data);
+	void SyncNetworkEnemyPositions(sf::Packet packet);
 	int GetIndexForPlayer(Player* player);
 	Player* GetPlayerFromIndex(int playerID);
 protected:
@@ -47,7 +47,7 @@ protected:
 	sf::Text pauseText;
 	sf::Font pauseFont;
 	LevelLoaderButton* skipLevelButton;
-	std::map<int, Player*> _otherPlayers;
+	std::map<int, Player*> _players;
 	int _numberOfEnemies;
 	int _numberOfChests;
 private:
