@@ -66,6 +66,23 @@ void GameLevel::update(float dt)
 		window->getView().getCenter().y - window->getSize().y / 2));
 	skipLevelButton->setPosition(skipButtonPos + sf::Vector2f(window->getView().getCenter().x - window->getSize().x / 2,
 		window->getView().getCenter().y - window->getSize().y / 2));
+	// Handle player attacked real-time event
+	if (_players[NetworkingManager::GetMyConnectionIndex()]->DidJustAttack())
+	{
+		PlayerAttackData data;
+		data.playerID = NetworkingManager::GetMyConnectionIndex();
+		int id = characterManager->getEnemyID(_players[NetworkingManager::GetMyConnectionIndex()]->GetEnemyTarget());
+		if (id == -1)
+		{
+			std::cout << "ERROR COULD NOT LOCATE ENEMY FROM ID FOR PLAYER ATTACK DATA" << std::endl;
+			data.enemyID = 0;
+		}
+		else
+			data.enemyID = id;
+		NetworkingManager::SendPlayerAttackData(data);
+		_players[NetworkingManager::GetMyConnectionIndex()]->ResetJustAttacked();
+	}
+	// Normal game update loop stuff
 	if (gameState->getCurrentState() != State::PAUSE)
 	{
 		//Check for map collisions
@@ -92,23 +109,34 @@ void GameLevel::handleNetwork(float dt)
 	{
 		// Are there any ready sockets?
 		int socketID = NetworkingManager::FindReadySockets();
-		if (socketID != -1)
+		while (socketID != -1)
 		{
-			sf::Packet recievePacket = NetworkingManager::RecievePacketOnSocket(socketID);
-			std::string functionName;
-			recievePacket >> functionName;
-			std::cout << "Recieved function name is " << functionName << std::endl;
-			//FUNCTION CALLS
-			if (functionName == "GetPlayerPos")
-				NetworkingManager::SendPlayerPosResultPacket(GetPlayerPos(), socketID);
-			else if (functionName == "SyncNetworkPosition")
+			sf::Packet* packet = NetworkingManager::RecievePacketOnSocket(socketID);
+			if (packet)
 			{
-				if (NetworkingManager::IsCharacterInitialised(socketID))
-					SyncNetworkPosition(recievePacket);
+				sf::Packet recievePacket = *packet;
+				std::string functionName;
+				recievePacket >> functionName;
+				std::cout << "Recieved function name is " << functionName << std::endl;
+				//FUNCTION CALLS
+				if (functionName == "GetPlayerPos")
+					NetworkingManager::SendPlayerPosResultPacket(GetPlayerPos(), socketID);
+				else if (functionName == "SyncNetworkPosition")
+				{
+					if (NetworkingManager::IsCharacterInitialised(socketID))
+						SyncNetworkPosition(recievePacket);
+				}
+				else if (functionName == "GetEnemies")
+					GetEnemyInfoForClient(socketID);
+				else if (functionName == "SyncPlayerAttackedEvent")
+					SyncPlayerAttackedEvent(recievePacket);
+				else
+					std::cout << "Unhandled event call" << functionName << std::endl;
+				std::cout << "Grabbing another packet" << std::endl;
 			}
-			else if (functionName == "GetEnemies")
-				GetEnemyInfoForClient(socketID);
+			socketID = NetworkingManager::FindReadySockets();
 		}
+		std::cout << "Finished tick " << std::endl;
 		if (NetworkingManager::IsCharacterInitialised(socketID))
 			ServerUpdateEnemyPositions();
 	}
@@ -130,6 +158,12 @@ void GameLevel::handleNetwork(float dt)
 			}
 			else if (eventName == "SpawnNetworkedEnemies")
 				SpawnNetworkedEnemies(recvPacket);
+			else if (eventName == "PlayerAttackedEvent")
+			{
+				PlayerAttackData data;
+				recvPacket >> data;
+				HandlePlayerAttackedEvent(data);
+			}
 			else
 			{
 				std::string call = eventName;
@@ -174,10 +208,9 @@ void GameLevel::render()
 	endDraw();
 }
 
-void GameLevel::switchToLevel()
+void GameLevel::switchToLevel(std::map<int, Player*> players)
 {
-	//setPlayer(NetworkingManager::localPlayer);
-	_players = NetworkingManager::GetNetworkPlayers();
+	_players = players;
 	inventoryManager->addToInventories(_players[NetworkingManager::GetMyConnectionIndex()]->getInventory());
 	healthUI = new HealthUI(_players[NetworkingManager::GetMyConnectionIndex()], window, sf::Vector2f(window->getSize().x - 150.0f, window->getSize().y - 40.0f));
 	cursor = new Cursor(window, inventoryManager, input, _players[NetworkingManager::GetMyConnectionIndex()]);
@@ -271,6 +304,14 @@ void GameLevel::ServerUpdateEnemyPositions()
 	}
 }
 
+void GameLevel::SyncPlayerAttackedEvent(sf::Packet packet)
+{
+	PlayerAttackData data;
+	packet >> data;
+	HandlePlayerAttackedEvent(data);
+	NetworkingManager::SendPlayerAttackData(data);
+}
+
 ///CLIENT FUNCTIONS////////////////////////////////////////////////
 void GameLevel::SyncNetworkPlayerPositions(sf::Packet packet)
 {
@@ -349,4 +390,10 @@ Player* GameLevel::GetPlayerFromIndex(int playerID)
 			return it->second;
 	}
 	return nullptr;
+}
+
+void GameLevel::HandlePlayerAttackedEvent(PlayerAttackData data)
+{
+	_players[data.playerID]->setEnemyTarget(characterManager->getEnemy(data.enemyID));
+	_players[data.playerID]->manualAttack();
 }

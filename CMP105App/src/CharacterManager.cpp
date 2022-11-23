@@ -195,3 +195,15 @@ std::vector<sf::Vector2f> CharacterManager::getEnemyPositions()
 	}
 	return positions;
 }
+
+int CharacterManager::getEnemyID(Character* enemy)
+{
+	for (int i = 0; i < characters.size(); i++)
+	{
+		if (characters[i] == enemy)
+		{
+			return i;
+		}
+	}
+	return -1;
+}

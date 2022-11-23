@@ -15,6 +15,7 @@ Player::Player(std::string textureName, sf::Vector2f pos, sf::Vector2f size, flo
 	this->chestManager = chestManager;
 	this->dungeonExit = dungeonExit;
 	this->damageAudioName = "DwarfDamage";
+	justAttacked = false;
 };
 
 Player::~Player(){}
@@ -183,6 +184,7 @@ void Player::attack()
 		enemyTarget->damage(dynamic_cast<Weapon*>(inventory->getSlot(10)->getItem())->getDamage(), getPosition());
 		//Play attack sound
 		audio->playSoundbyName("DwarfAttack");
+		justAttacked = true;
 	}
 }
 
@@ -242,3 +244,8 @@ void Player::setNextLevel(int* nextLevel)
 	this->nextLevel = nextLevel;
 }
 
+void Player::manualAttack()
+{
+	attack();
+	ResetJustAttacked();
+}

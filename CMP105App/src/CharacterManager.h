@@ -31,6 +31,7 @@ public:
 	Player* getEnemyTarget(int index);
 	std::vector<Player*> getEnemyFollowingTargets();
 	std::vector<sf::Vector2f> getEnemyPositions();
+	int getEnemyID(Character* enemy);
 private:
 	//Vector of all enemies in level
 	std::vector<Enemy*> characters;

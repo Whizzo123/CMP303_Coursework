@@ -3,10 +3,13 @@
 #include "Inventory.h"
 #include "ChestManager.h"
 #include "DungeonExit.h"
+#include <functional>
+#include "Network/NetworkingManager.h"
 
 class Player : public Character
 {
 public:
+
 	Player() {};
 	Player(std::string textureName, sf::Vector2f pos, sf::Vector2f size, float speed, Input* input, sf::RenderWindow* window, AudioManager* audio, float maxHealth);
 	~Player();
@@ -26,6 +29,10 @@ public:
 	Inventory* getInventory();
 	int* getNextLevel();
 	void setNextLevel(int* nextLevel);
+	bool DidJustAttack() { return justAttacked; }
+	void ResetJustAttacked() { justAttacked = false; }
+	Character* GetEnemyTarget() { return enemyTarget; }
+	void manualAttack();
 private:
 	sf::RectangleShape attackRectDebug;
 	sf::FloatRect attackRect;
@@ -37,6 +44,7 @@ private:
 	float attackSpeed;
 	float currentAttackTimer;
 	int* nextLevel;
+	bool justAttacked;
 private:
 	void attack();
 protected:

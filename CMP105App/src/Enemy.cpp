@@ -39,7 +39,6 @@ void Enemy::update(float dt)
 			moving = true;
 			move(targetVector * speed * dt);
 			lastDirection = targetVector;
-			std::cout << "Moving to attack" << std::endl;
 		}
 		//If attacking and cool down as reached 0
 		else if (attacking && currentAttackCooldown <= 0)

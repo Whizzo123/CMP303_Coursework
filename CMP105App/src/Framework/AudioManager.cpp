@@ -28,7 +28,7 @@ void AudioManager::playSoundbyName(std::string lname)
 	{
 		if (sounds[i].name == lname)
 		{
-			sounds[i].sound.play();
+			//sounds[i].sound.play();
 			return;
 		}
 	}

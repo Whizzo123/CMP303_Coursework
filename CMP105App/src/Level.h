@@ -25,7 +25,7 @@ public:
 	void render();
 	void resetNextLevel();
 	int getNextLevel();
-	virtual void switchToLevel() {};
+	virtual void switchToLevel(std::map<int, Player*> players) {};
 	void setNextLevel(int levelNumber) { nextLevel = levelNumber; };
 	//void setPlayer(Player* player) { this->player = player; }
 protected:

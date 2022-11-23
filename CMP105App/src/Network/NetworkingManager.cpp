@@ -5,7 +5,7 @@ bool NetworkingManager::_server = false;
 bool NetworkingManager::_serverStarted = false;
 bool NetworkingManager::_clientStarted = false;
 NetworkConnection** NetworkingManager::_connections = new NetworkConnection*[numberOfConnectionsAllowed];
-std::map<int, Player*> NetworkingManager::_players = std::map<int, Player*>();
+//std::map<int, Player*> NetworkingManager::_players = std::map<int, Player*>();
 int NetworkingManager::_connectionIndex = 1;
 MListener* NetworkingManager::_listener = 0;
 MSocket* NetworkingManager::_mySocket = 0;
@@ -32,15 +32,10 @@ bool NetworkingManager::StartServer(Input* input, sf::RenderWindow* window, Audi
 	_listener = new MListener(port);
 	_selector = new MSocketSelector();
 	_listener->listen();
-	CreateLocalPlayer(0, input, window, audioManager);
 	MSocket* clientSocket = _listener->accept();
 	// Add client to NetworkConnections
 	_connections[_connectionIndex] = new NetworkConnection(_connectionIndex, clientSocket);
 	_selector->add(_connections[_connectionIndex]->getConnectionSocket());
-	// Create a network player for them
-	sf::Vector2f spawnPos = sf::Vector2f(100, 275);
-	_players[_connectionIndex] = new Player("Dwarf_V2", spawnPos, sf::Vector2f(100, 100), 200.0f, nullptr, window, audioManager, 10.0f);
-	_playerNetworkObjects[_connectionIndex] = new NetworkObject(_connectionIndex, false);
 	socketIDToCharacterInitialised[_connectionIndex] = false;
 	// Send the client a welcome connection
 	sf::Packet sendPacket;
@@ -72,33 +67,6 @@ bool NetworkingManager::StartClient(Input* input, sf::RenderWindow* window, Audi
 	sf::Packet connectionIndexRecvPacket;
 	_mySocket->recieve(connectionIndexRecvPacket);
 	connectionIndexRecvPacket >> _myConnectionIndex;
-	CreateLocalPlayer(_myConnectionIndex, input, window, audioManager);
-	SendFunctionCall("GetPlayerPos");
-	// TODO create simpler method of dealing with unneccessary functionCall
-	sf::Packet* packet = RecievePacketOnSocket();
-	sf::Packet posResultPacket = *packet;
-	PlayerPosResult results;
-	std::string discardFuncCall;
-	posResultPacket >> discardFuncCall;
-	posResultPacket >> results;
-	for (int i = 0; i < results.resultPositions.size(); i++)
-	{
-		if (i != _myConnectionIndex)
-		{
-			sf::Vector2f spawnPos = results.resultPositions[i];
-			_players[i] = new Player("Dwarf_V2", spawnPos, sf::Vector2f(100, 100), 200.0f, nullptr, window, audioManager, 10.0f);
-			_playerNetworkObjects[i] = new NetworkObject(i, false);
-			networkObjects.push_back(_playerNetworkObjects[i]);
-		}
-		else
-		{
-			sf::Vector2f spawnPos = results.resultPositions[i];
-			_players[i]->setPosition(spawnPos);
-			_playerNetworkObjects[i] = new NetworkObject(i, true);
-			networkObjects.push_back(_playerNetworkObjects[i]);
-		}
-	}
-	_mySocket->setBlocking(false);
 	_clientStarted = true;
 	return true;
 }
@@ -111,11 +79,14 @@ int NetworkingManager::FindReadySockets()
 	return socketID;
 }
 
-sf::Packet NetworkingManager::RecievePacketOnSocket(int socketID)
+sf::Packet* NetworkingManager::RecievePacketOnSocket(int socketID)
 {
-	sf::Packet recievePacket;
-	_connections[socketID]->getConnectionSocket()->recieve(recievePacket);
-	return recievePacket;
+	sf::Packet* recievePacket = new sf::Packet();
+	bool okay = _connections[socketID]->getConnectionSocket()->recieve(*recievePacket);
+	if (okay)
+		return recievePacket;
+	else
+		return nullptr;
 }
 
 sf::Packet* NetworkingManager::RecievePacketOnSocket()
@@ -147,7 +118,6 @@ void NetworkingManager::SendEnemySpawnInfoResult(EnemyInfo* enemiesInfo, int len
 	sf::Packet sendEnemyInfoPacket;
 	sendEnemyInfoPacket << "SpawnNetworkedEnemies";
 	sendEnemyInfoPacket << result;
-	//SendFunctionCall("SpawnNetworkedEnemies", socketID);
 	_connections[socketID]->getConnectionSocket()->send(sendEnemyInfoPacket);
 }
 
@@ -195,32 +165,38 @@ void NetworkingManager::SendUpdatedNetworkData(std::string eventCall, NetworkObj
 	sf::Packet packet;
 	sf::String eventName = "ServerUpdateEnemyPositions";
 	if (socketID == -1)
-	{
-		//SendFunctionCall(eventCall);
-		
+	{	
 		packet << "ServerUpdateEnemyPositions";
 		packet << data;
 		_mySocket->send(packet);
 	}
 	else
 	{
-		//SendFunctionCall(eventCall, socketID);
 		packet << "ServerUpdateEnemyPositions";
 		packet << data;
 		_connections[socketID]->getConnectionSocket()->send(packet);
 	}
 }
 
-void NetworkingManager::CreateLocalPlayer(int index, Input* input, sf::RenderWindow* window, AudioManager* audio)
+void NetworkingManager::SendPlayerAttackData(PlayerAttackData data)
 {
-	_players[index] = new Player("Dwarf_V2", sf::Vector2f(300, 275), sf::Vector2f(100, 100), 200.0f, input, window, audio, 10.0f);
-	Inventory* inventory = new Inventory(window, input);
-	inventory->addToSlot(10, new Weapon("Axe of Grimoth", 1, 1, 1.5));
-	inventory->addToSlot(0, new Armour("Helmet of Valor", 1, 1, HEAD));
-	inventory->addToSlot(1, new Armour("Mail of Fire", 1, 2, CHEST));
-	inventory->addToSlot(2, new Armour("Legs of Speed", 1, 1, LEGS));
-	inventory->addToSlot(3, new Armour("Skeleton Boots", 1, 1, FEET));
-	_players[index]->setInventory(inventory);
+	sf::Packet packet;
+	if (isServer)
+	{
+		packet << "PlayerAttackedEvent";
+		packet << data;
+		for (int i = 1; i < GetNumConnections(); i++)
+		{
+			if (i != data.playerID)
+				_connections[i]->getConnectionSocket()->send(packet);
+		}
+	}
+	else
+	{
+		packet << "SyncPlayerAttackedEvent";
+		packet << data;
+		_mySocket->send(packet);
+	}
 }
 
 bool NetworkingManager::JoinServer()
@@ -241,11 +217,6 @@ bool NetworkingManager::isServerStarted()
 bool NetworkingManager::isClientStarted()
 {
 	return _clientStarted;
-}
-
-std::map<int, Player*> NetworkingManager::GetNetworkPlayers()
-{
-	return _players;
 }
 
 void NetworkingManager::AddNetworkObject(NetworkObject* object)
@@ -406,4 +377,13 @@ sf::Packet& operator << (sf::Packet& packet, const EnemyNetworkObject data)
 sf::Packet& operator >> (sf::Packet& packet, EnemyNetworkObject& data)
 {
 	return packet >> data.objectID >> data.position >> data.velocity >> data.targetedPlayerID;
+}
+
+sf::Packet& operator << (sf::Packet& packet, const PlayerAttackData data)
+{
+	return packet << data.playerID << data.enemyID;
+}
+sf::Packet& operator >> (sf::Packet& packet, PlayerAttackData& data)
+{
+	return packet >> data.playerID >> data.enemyID;
 }

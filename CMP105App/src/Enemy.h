@@ -4,7 +4,7 @@
 
 enum EnemyType { IMP, GLADIATOR, MINOTAUR };
 
-
+//TODO make this enemy type an int
 struct EnemyInfo
 {
 	sf::Int32 objectID;

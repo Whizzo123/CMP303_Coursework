@@ -5,10 +5,15 @@
 #include "MSocketSelector.h"
 #include <string>
 #include "NetworkPlayer.h"
-#include "../Player.h"
 #include "../Enemy.h"
 
 //const float NETWORK_TICK_TIME = 0.2f;
+
+struct PlayerAttackData
+{
+	sf::Int32 playerID;
+	sf::Int32 enemyID;
+};
 
 struct EnemySpawnInfoResult
 {
@@ -54,17 +59,17 @@ public:
 	static bool isServer();
 	static bool isClientStarted();
 	static bool isServerStarted();
-	static std::map<int, Player*> GetNetworkPlayers();
+	//static std::map<int, Player*> GetNetworkPlayers();
 	static void AddNetworkObject(NetworkObject* object);
-	static void CreateLocalPlayer(int index, Input* input, sf::RenderWindow* window, AudioManager* audio);
 	static int FindReadySockets();
-	static sf::Packet RecievePacketOnSocket(int socketID);
+	static sf::Packet* RecievePacketOnSocket(int socketID);
 	static sf::Packet* RecievePacketOnSocket();
 	static void SendPlayerPosResultPacket(std::vector<sf::Vector2f> positions, int socketID);
 	static void SendEnemySpawnInfoResult(EnemyInfo* enemiesInfo, int length, int socketID);
 	static void SendFunctionCall(std::string funcCallName, int socketID = -1);
 	static void SendUpdatedNetworkData(std::vector<NetworkObject> networkObjects);
 	static void SendUpdatedNetworkData(std::string eventCall, NetworkObjectUpdateData data, int socketID = -1);
+	static void SendPlayerAttackData(PlayerAttackData data);
 	static int GetNumConnections() { return _connectionIndex; }
 	static int GetMyConnectionIndex() { return _myConnectionIndex; }
 	static std::map<int, bool> GetNObjectChangeState() { return changeStateOfNetworkObjects; }
@@ -73,7 +78,8 @@ public:
 	static void SetToBlock(bool value) { _mySocket->setBlocking(value); }
 	static void SetCharacterInitialised(int socketID) { socketIDToCharacterInitialised[socketID] = true; }
 	static bool IsCharacterInitialised(int socketID) { return socketIDToCharacterInitialised[socketID]; }
-
+	static void AddPlayerNetworkObject(int index, NetworkObject* player) { _playerNetworkObjects[index] = player; }
+	static NetworkObject* GetPlayerNetworkObject(int index) { return _playerNetworkObjects[index]; }
 	static const unsigned short port = 4444;
 	static const int numberOfConnectionsAllowed = 2;
 	//static Player* localPlayer;
@@ -84,7 +90,7 @@ private:
 	static bool _server;
 	static bool _serverStarted;
 	static NetworkConnection** _connections; 
-	static std::map<int, Player*> _players;
+	//static std::map<int, Player*> _players;
 	static std::map<int, NetworkObject*> _playerNetworkObjects;
 	static int _connectionIndex;
 	static MListener* _listener;
@@ -135,5 +141,6 @@ sf::Packet& operator << (sf::Packet& packet, const NetworkObjectTargetSyncVar da
 sf::Packet& operator >> (sf::Packet& packet, NetworkObjectTargetSyncVar& data);
 sf::Packet& operator << (sf::Packet& packet, const EnemyNetworkObject data);
 sf::Packet& operator >> (sf::Packet& packet, EnemyNetworkObject& data);
-
+sf::Packet& operator << (sf::Packet& packet, const PlayerAttackData data);
+sf::Packet& operator >> (sf::Packet& packet, PlayerAttackData& data);
 

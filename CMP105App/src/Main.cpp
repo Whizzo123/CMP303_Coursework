@@ -19,6 +19,18 @@
 #include "Network/NetworkingManager.h"
 
 Level* levels[10];
+static std::map<int, Player*> _players;
+
+void SetupPlayerInventory(Player* player, sf::RenderWindow* window, Input* input)
+{
+	Inventory* inventory = new Inventory(window, input);
+	inventory->addToSlot(10, new Weapon("Axe of Grimoth", 1, 1, 1.5));
+	inventory->addToSlot(0, new Armour("Helmet of Valor", 1, 1, HEAD));
+	inventory->addToSlot(1, new Armour("Mail of Fire", 1, 2, CHEST));
+	inventory->addToSlot(2, new Armour("Legs of Speed", 1, 1, LEGS));
+	inventory->addToSlot(3, new Armour("Skeleton Boots", 1, 1, FEET));
+	player->setInventory(inventory);
+}
 
 void windowProcess(sf::RenderWindow* window, Input* in)
 {
@@ -156,7 +168,7 @@ int main()
 			int nextLevelIndex = levels[currentLevelIndex]->getNextLevel();
 			levels[currentLevelIndex]->resetNextLevel();
 			currentLevelIndex = nextLevelIndex;
-			levels[currentLevelIndex]->switchToLevel();
+			levels[currentLevelIndex]->switchToLevel(_players);
 		}
 		if (mNetworkStarted == false)
 		{
@@ -164,12 +176,55 @@ int main()
 			{
 				NetworkingManager::StartClient(&input, &window, &audioManager);
 				levels[currentLevelIndex]->setNextLevel(2);
+				//Spawn players
+				NetworkingManager::SendFunctionCall("GetPlayerPos");
+				sf::Packet* packet = NetworkingManager::RecievePacketOnSocket();
+				sf::Packet posResultPacket = *packet;
+				PlayerPosResult results;
+				std::string discardFuncCall;
+				posResultPacket >> discardFuncCall;
+				posResultPacket >> results;
+				for (int i = 0; i < results.resultPositions.size(); i++)
+				{
+					sf::Vector2f spawnPos = results.resultPositions[i];
+					if (i != NetworkingManager::GetMyConnectionIndex())
+					{
+						_players[i] = new Player("Dwarf_V2", spawnPos, sf::Vector2f(100, 100), 200.0f, nullptr, &window, &audioManager, 10.0f);
+						NetworkingManager::AddPlayerNetworkObject(i, new NetworkObject(i, false));
+					}
+					else
+					{
+						_players[i] = new Player("Dwarf_V2", spawnPos, sf::Vector2f(100, 100), 200.0f, &input, &window, &audioManager, 10.0f);
+						NetworkingManager::AddPlayerNetworkObject(i, new NetworkObject(i, true));
+					}
+					NetworkingManager::AddNetworkObject(NetworkingManager::GetPlayerNetworkObject(i));
+					SetupPlayerInventory(_players[i], &window, &input);
+				}
+				NetworkingManager::SetToBlock(false);
 				mNetworkStarted = true;
 			}
 			else if (static_cast<MainMenu*>(levels[currentLevelIndex])->isStartServer() == true)
 			{
 				NetworkingManager::StartServer(&input, &window, &audioManager);
 				levels[currentLevelIndex]->setNextLevel(2);
+				//Spawn players
+				for (int i = 0; i < NetworkingManager::GetNumConnections(); i++)
+				{
+					sf::Vector2f spawnPos = sf::Vector2f(rand() % 500 + 200, 275);
+					if (i == 0)
+					{
+						_players[i] = new Player("Dwarf_V2", spawnPos, sf::Vector2f(100, 100), 200.0f, &input, &window, &audioManager, 10.0f);
+						NetworkingManager::AddPlayerNetworkObject(i, new NetworkObject(i, true));
+					}
+					else
+					{
+						_players[i] = new Player("Dwarf_V2", spawnPos, sf::Vector2f(100, 100), 200.0f, nullptr, &window, &audioManager, 10.0f);
+						NetworkingManager::AddPlayerNetworkObject(i, new NetworkObject(i, false));
+					}
+					SetupPlayerInventory(_players[i], &window, &input);
+					NetworkingManager::AddNetworkObject(NetworkingManager::GetPlayerNetworkObject(i));
+				}
+				// add in network object gen
 				mNetworkStarted = true;
 			}
 		}

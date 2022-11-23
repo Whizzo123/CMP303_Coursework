@@ -15,7 +15,7 @@ public:
 	void update(float dt) ;
 	void handleInput(float dt) override;
 	void render() override;
-	void switchToLevel() override;
+	void switchToLevel(std::map<int, Player*> players) override;
 	std::vector<Enemy*> getEnemies() { return characterManager->getAllCharacters(); }
 	int getNumOfEnemies() { return characterManager->getCurrentCharacterCount(); }
 	std::vector<sf::Vector2f> GetPlayerPos();
@@ -30,6 +30,8 @@ public:
 	void SyncNetworkEnemyPositions(sf::Packet packet);
 	int GetIndexForPlayer(Player* player);
 	Player* GetPlayerFromIndex(int playerID);
+	void SyncPlayerAttackedEvent(sf::Packet packet);
+	void HandlePlayerAttackedEvent(PlayerAttackData data);
 protected:
 	
 protected:
