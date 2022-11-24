@@ -21,6 +21,7 @@ public:
 	void setInventory(Inventory* inventory);
 	float getCurrentHealth();
 	float getMaxHealth();
+	void resetHealth();
 protected:
 	void debugLog(std::string msg);
 	virtual void updateAnimations(float dt);

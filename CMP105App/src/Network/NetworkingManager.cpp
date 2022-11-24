@@ -199,6 +199,27 @@ void NetworkingManager::SendPlayerAttackData(PlayerAttackData data)
 	}
 }
 
+void NetworkingManager::SendPlayerReviveData(int playerID)
+{
+	sf::Packet packet;
+	if (isServer)
+	{
+		packet << "PlayerReviveEvent";
+		packet << sf::Int32(playerID);
+		for (int i = 1; i < GetNumConnections(); i++)
+		{
+			if (i != playerID)
+				_connections[i]->getConnectionSocket()->send(packet);
+		}
+	}
+	else
+	{
+		packet << "SyncPlayerReviveEvent";
+		packet << sf::Int32(playerID);
+		_mySocket->send(packet);
+	}
+}
+
 bool NetworkingManager::JoinServer()
 {
 	return true;

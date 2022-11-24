@@ -160,7 +160,7 @@ void Character::damage(double damage, sf::Vector2f enemyPos)
 		showingStatsIndicator = true;
 		//Deal damage and calculate knockback
 		currentHealth -= damage;
-		calculateKnockback(enemyPos);
+		//calculateKnockback(enemyPos);
 		//Play specific damage sound for this character
 		audio->playSoundbyName(damageAudioName);
 		//Check whether character has been killed by that damage
@@ -219,4 +219,11 @@ float Character::getCurrentHealth()
 float Character::getMaxHealth()
 {
 	return maxHealth;
+}
+
+void Character::resetHealth()
+{
+	currentHealth = maxHealth;
+	alive = true;
+	dead = false;
 }

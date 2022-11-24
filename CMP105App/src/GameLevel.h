@@ -32,6 +32,9 @@ public:
 	Player* GetPlayerFromIndex(int playerID);
 	void SyncPlayerAttackedEvent(sf::Packet packet);
 	void HandlePlayerAttackedEvent(PlayerAttackData data);
+	void HandlePlayerDeath(int playerID);
+	void HandlePlayerReviveEvent(int playerID);
+	void SyncPlayerReviveEvent(sf::Packet packet);
 protected:
 	
 protected:

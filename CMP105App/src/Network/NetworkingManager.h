@@ -70,6 +70,7 @@ public:
 	static void SendUpdatedNetworkData(std::vector<NetworkObject> networkObjects);
 	static void SendUpdatedNetworkData(std::string eventCall, NetworkObjectUpdateData data, int socketID = -1);
 	static void SendPlayerAttackData(PlayerAttackData data);
+	static void SendPlayerReviveData(int playerID);
 	static int GetNumConnections() { return _connectionIndex; }
 	static int GetMyConnectionIndex() { return _myConnectionIndex; }
 	static std::map<int, bool> GetNObjectChangeState() { return changeStateOfNetworkObjects; }

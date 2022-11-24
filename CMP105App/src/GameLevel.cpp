@@ -88,6 +88,8 @@ void GameLevel::update(float dt)
 		//Check for map collisions
 		for (auto player : _players)
 		{
+			if (player.first == NetworkingManager::GetMyConnectionIndex() && player.second->isAlive() == false)
+				HandlePlayerDeath(player.first);
 			map->collisionCheck(player.second);
 			//Update characters and player
 			characterManager->update(dt, map, player.second);
@@ -130,6 +132,8 @@ void GameLevel::handleNetwork(float dt)
 					GetEnemyInfoForClient(socketID);
 				else if (functionName == "SyncPlayerAttackedEvent")
 					SyncPlayerAttackedEvent(recievePacket);
+				else if (functionName == "SyncPlayerReviveEvent")
+					SyncPlayerReviveEvent(recievePacket);
 				else
 					std::cout << "Unhandled event call" << functionName << std::endl;
 				std::cout << "Grabbing another packet" << std::endl;
@@ -163,6 +167,12 @@ void GameLevel::handleNetwork(float dt)
 				PlayerAttackData data;
 				recvPacket >> data;
 				HandlePlayerAttackedEvent(data);
+			}
+			else if (eventName == "PlayerReviveEvent")
+			{
+				int playerID;
+				recvPacket >> playerID;
+				HandlePlayerReviveEvent(playerID);
 			}
 			else
 			{
@@ -246,7 +256,10 @@ void GameLevel::SyncNetworkPosition(sf::Packet packet)
 	NetworkObjectUpdateData updatedObjects;
 	packet >> updatedObjects;
 	for (int i = 0; i < updatedObjects.playerLength; i++)
-		_players[updatedObjects.playerPosSyncVars[i].objectID]->setPosition(updatedObjects.playerPosSyncVars[i].newPosition);
+	{
+		sf::Vector2f pos = updatedObjects.playerPosSyncVars[i].newPosition;
+		_players[updatedObjects.playerPosSyncVars[i].objectID]->setPosition(pos);
+	}
 	for (int i = 1; i < NetworkingManager::GetNumConnections(); i++)
 	{
 		std::vector<sf::Vector2f> playerPositions = GetPlayerPos();
@@ -310,6 +323,14 @@ void GameLevel::SyncPlayerAttackedEvent(sf::Packet packet)
 	packet >> data;
 	HandlePlayerAttackedEvent(data);
 	NetworkingManager::SendPlayerAttackData(data);
+}
+
+void GameLevel::SyncPlayerReviveEvent(sf::Packet packet)
+{
+	int playerID;
+	packet >> playerID;
+	HandlePlayerReviveEvent(playerID);
+	NetworkingManager::SendPlayerReviveData(playerID);
 }
 
 ///CLIENT FUNCTIONS////////////////////////////////////////////////
@@ -396,4 +417,18 @@ void GameLevel::HandlePlayerAttackedEvent(PlayerAttackData data)
 {
 	_players[data.playerID]->setEnemyTarget(characterManager->getEnemy(data.enemyID));
 	_players[data.playerID]->manualAttack();
+}
+
+void GameLevel::HandlePlayerDeath(int playerID)
+{
+	std::cout << "Handling player death" << std::endl;
+	_players[playerID]->resetHealth();
+	sf::Vector2f pos = sf::Vector2f(rand() % 500 + 200, 275);
+	_players[playerID]->setPosition(pos);
+	NetworkingManager::SendPlayerReviveData(playerID);
+}
+
+void GameLevel::HandlePlayerReviveEvent(int playerID)
+{
+	_players[playerID]->resetHealth();
 }

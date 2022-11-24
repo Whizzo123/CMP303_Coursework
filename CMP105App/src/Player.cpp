@@ -205,8 +205,8 @@ sf::FloatRect* Player::getInteractRect()
 
 void Player::onDeath()
 {
-	debugLog("Player Dead");
-	*nextLevel = 8;
+	//debugLog("Player Dead");
+	//*nextLevel = 8;
 }
 
 ChestManager* Player::getChestManager()

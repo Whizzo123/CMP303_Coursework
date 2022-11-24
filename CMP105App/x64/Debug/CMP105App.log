@@ -1,16 +1,8 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(514,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (CMP105App.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  GameLevel.cpp
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\InventoryManager.h(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.h(106,2): warning C4091: 'static ': ignored on left of 'NetworkingManager' when no variable is declared
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\CharacterManager.h(28,33): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\DragController.h(3,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\GameLevel.cpp(261,29): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\GameLevel.cpp(260,23): warning C4101: 'result': unreferenced local variable
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\GameLevel.cpp(283,42): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-  NetworkingManager.cpp
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.h(106,2): warning C4091: 'static ': ignored on left of 'NetworkingManager' when no variable is declared
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.cpp(106,37): warning C4267: '=': conversion from 'size_t' to 'sf::Int32', possible loss of data
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.cpp(143,47): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Network\NetworkingManager.cpp(184,6): warning C4551: function call missing argument list
-  Generating Code...
+  Character.cpp
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Character.cpp(20,18): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Character.cpp(142,19): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Character.cpp(162,20): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Character.cpp(221,9): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\CMP105App\src\Character.cpp(226,18): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
   CMP105App.vcxproj -> C:\Users\jaasc\OneDrive - Abertay University\Uni_Stuff\3rd_Year\CMP303_Network\Coursework\CMP303_Coursework\x64\Debug\CMP303_App.exe
