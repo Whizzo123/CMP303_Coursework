@@ -1,7 +1,7 @@
 #include "GameLevel.h"
 
 GameLevel::GameLevel(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud, Player* player,
-	int levelIndex, int numberOfEnemies, int numberOfChests, std::vector<int>* mapData, sf::Vector2u mapDimensions) : Level(hwnd, in, gs, aud)
+	sf::Vector2f spawnPoint, int levelIndex, int numberOfEnemies, int numberOfChests, std::vector<int>* mapData, sf::Vector2u mapDimensions) : Level(hwnd, in, gs, aud)
 {
 	//Initialize variables
 	//this->player = player;
@@ -11,8 +11,7 @@ GameLevel::GameLevel(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioMana
 	chestManager = new ChestManager(input, inventoryManager, audio);
 	map = new DungeonDiverTileMap("DungeonWall_V2", sf::Vector2f(75, 75), mapDimensions, *mapData);
 	backgroundMap = new BackgroundMap("DungeonWall_V2", sf::Vector2f(75, 75), sf::Vector2u(100, 100));
-	// We wannna get rid of this guy for now
-	// ____________________________________________
+	dungeonExit = new DungeonExit(map->getSpawnableTiles().back(), &nextLevel, levelIndex);
 	characterManager = new CharacterManager(numberOfEnemies, audio, map);
 	pauseFont.loadFromFile("font/arial.ttf");
 	pauseText.setFont(pauseFont);
@@ -21,6 +20,8 @@ GameLevel::GameLevel(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioMana
 	skipButtonPos = sf::Vector2f(900, 500);
 	pauseText.setPosition(pauseTextPos);
 	skipLevelButton = new LevelLoaderButton("skipButton", skipButtonPos, sf::Vector2f(150, 75), input, window, 0);
+	_numberOfChests = numberOfChests;
+	_spawnPoint = spawnPoint;
 }
 
 void GameLevel::handleInput(float dt)
@@ -66,22 +67,6 @@ void GameLevel::update(float dt)
 		window->getView().getCenter().y - window->getSize().y / 2));
 	skipLevelButton->setPosition(skipButtonPos + sf::Vector2f(window->getView().getCenter().x - window->getSize().x / 2,
 		window->getView().getCenter().y - window->getSize().y / 2));
-	// Handle player attacked real-time event
-	if (_players[NetworkingManager::GetMyConnectionIndex()]->DidJustAttack())
-	{
-		PlayerAttackData data;
-		data.playerID = NetworkingManager::GetMyConnectionIndex();
-		int id = characterManager->getEnemyID(_players[NetworkingManager::GetMyConnectionIndex()]->GetEnemyTarget());
-		if (id == -1)
-		{
-			std::cout << "ERROR COULD NOT LOCATE ENEMY FROM ID FOR PLAYER ATTACK DATA" << std::endl;
-			data.enemyID = 0;
-		}
-		else
-			data.enemyID = id;
-		NetworkingManager::SendPlayerAttackData(data);
-		_players[NetworkingManager::GetMyConnectionIndex()]->ResetJustAttacked();
-	}
 	// Normal game update loop stuff
 	if (gameState->getCurrentState() != State::PAUSE)
 	{
@@ -119,7 +104,6 @@ void GameLevel::handleNetwork(float dt)
 				sf::Packet recievePacket = *packet;
 				std::string functionName;
 				recievePacket >> functionName;
-				std::cout << "Recieved function name is " << functionName << std::endl;
 				//FUNCTION CALLS
 				if (functionName == "GetPlayerPos")
 					NetworkingManager::SendPlayerPosResultPacket(GetPlayerPos(), socketID);
@@ -130,19 +114,28 @@ void GameLevel::handleNetwork(float dt)
 				}
 				else if (functionName == "GetEnemies")
 					GetEnemyInfoForClient(socketID);
+				else if (functionName == "GetChests")
+					GetChestInfoForClient(socketID);
 				else if (functionName == "SyncPlayerAttackedEvent")
 					SyncPlayerAttackedEvent(recievePacket);
 				else if (functionName == "SyncPlayerReviveEvent")
 					SyncPlayerReviveEvent(recievePacket);
+				else if (functionName == "SyncInventoryChangeEvent")
+					SyncInventoryChangeEvent(recievePacket);
+				else if (functionName == "NextLevel")
+				{
+					dungeonExit->loadLevel();
+					NetworkingManager::SendNextLevelMessage();
+				}
 				else
 					std::cout << "Unhandled event call" << functionName << std::endl;
-				std::cout << "Grabbing another packet" << std::endl;
 			}
 			socketID = NetworkingManager::FindReadySockets();
 		}
-		std::cout << "Finished tick " << std::endl;
-		if (NetworkingManager::IsCharacterInitialised(socketID))
+		for (int i = 1; i < NetworkingManager::GetNumConnections(); i++)
+		{
 			ServerUpdateEnemyPositions();
+		}
 	}
 	else
 	{
@@ -162,6 +155,8 @@ void GameLevel::handleNetwork(float dt)
 			}
 			else if (eventName == "SpawnNetworkedEnemies")
 				SpawnNetworkedEnemies(recvPacket);
+			else if (eventName == "SpawnNetworkedChests")
+				SpawnNetworkedChests(recvPacket);
 			else if (eventName == "PlayerAttackedEvent")
 			{
 				PlayerAttackData data;
@@ -174,6 +169,14 @@ void GameLevel::handleNetwork(float dt)
 				recvPacket >> playerID;
 				HandlePlayerReviveEvent(playerID);
 			}
+			else if (eventName == "InventoryChangeEvent")
+			{
+				InventorySyncData data;
+				recvPacket >> data;
+				HandleInventoryChangeEvent(data);
+			}
+			else if (eventName == "NextLevel")
+				dungeonExit->loadLevel();
 			else
 			{
 				std::string call = eventName;
@@ -196,7 +199,7 @@ void GameLevel::render()
 	backgroundMap->render(window);
 	map->render(window);
 	chestManager->draw(window);
-	//window->draw(*dungeonExit);
+	window->draw(*dungeonExit);
 	characterManager->draw(window);
 	//player.second->drawDebugInfo();
 	for (auto networkPlayer : _players)
@@ -221,17 +224,26 @@ void GameLevel::render()
 void GameLevel::switchToLevel(std::map<int, Player*> players)
 {
 	_players = players;
+	//TODO reset player positions here
 	inventoryManager->addToInventories(_players[NetworkingManager::GetMyConnectionIndex()]->getInventory());
 	healthUI = new HealthUI(_players[NetworkingManager::GetMyConnectionIndex()], window, sf::Vector2f(window->getSize().x - 150.0f, window->getSize().y - 40.0f));
 	cursor = new Cursor(window, inventoryManager, input, _players[NetworkingManager::GetMyConnectionIndex()]);
 	background = new Background(window, _players[NetworkingManager::GetMyConnectionIndex()]);
+	sf::Vector2f spawnPos = sf::Vector2f(rand() % ((int)_spawnPoint.x + 100) + ((int)_spawnPoint.x - 100), (int)_spawnPoint.y);
+	_players[NetworkingManager::GetMyConnectionIndex()]->setPosition(spawnPos);
 	_players[NetworkingManager::GetMyConnectionIndex()]->setChestManager(chestManager);
 	_players[NetworkingManager::GetMyConnectionIndex()]->setDungeonExit(dungeonExit);
 	_players[NetworkingManager::GetMyConnectionIndex()]->setNextLevel(&nextLevel);
 	if (NetworkingManager::isServer())
+	{
 		characterManager->spawnAllCharacters();
+		chestManager->spawn(map, window, input, _numberOfChests);
+	}
 	else
+	{
 		NetworkingManager::SendFunctionCall("GetEnemies");
+		NetworkingManager::SendFunctionCall("GetChests");
+	}
 }
 
 
@@ -287,6 +299,32 @@ void GameLevel::GetEnemyInfoForClient(int socketID)
 	NetworkingManager::SetCharacterInitialised(socketID);
 }
 
+void GameLevel::GetChestInfoForClient(int socketID)
+{
+	std::vector<Chest*> chests = chestManager->getChests();
+	ChestSpawnInfoResult result;
+	int length = chests.size();
+	ChestSpawnInfo* chestsInfo = new ChestSpawnInfo[length];
+	for (int i = 0; i < length; i++)
+	{
+		ChestSpawnInfo info;
+		Inventory* inventory = inventoryManager->getChestInventory(chests[i]);
+		info.position = chests[i]->getPosition();
+		info.itemsCount = inventory->getNumOfOccupiedSlots();
+		info.items = new ItemData[info.itemsCount];
+		for (int j = 0; j < info.itemsCount; j++)
+		{
+			std::string itemName = inventory->getSlot(j)->getItem()->getItemName();
+			info.items[j].itemIndex = ConfigLoader::getItemID(itemName);
+			info.items[j].itemType = (int)inventory->getSlot(j)->getItem()->getItemType();
+		}
+		chestsInfo[i] = info;
+	}
+	result.chestsInfo = chestsInfo;
+	result.length = length;
+	NetworkingManager::SendChestSpawnInfoResult(result, socketID);
+}
+
 void GameLevel::ServerUpdateEnemyPositions()
 {
 	// Grab all target positions of enemies
@@ -303,6 +341,7 @@ void GameLevel::ServerUpdateEnemyPositions()
 		enemy.velocity = enemyTargetPositions[i];
 		enemy.targetedPlayerID = GetIndexForPlayer(enemyTargets[i]);
 		enemyNetworkObjects[i] = enemy;
+		std::cout << "ID: " << enemy.objectID << "Pos: " << enemy.position.x << ", " << enemy.position.y << std::endl;
 	}
 	NetworkObjectUpdateData data;
 	data.enemyLength = length;
@@ -312,8 +351,8 @@ void GameLevel::ServerUpdateEnemyPositions()
 	// Call client-side function
 	for (int i = 1; i < NetworkingManager::GetNumConnections(); i++)
 	{
-		if(NetworkingManager::IsCharacterInitialised(i))
-			NetworkingManager::SendUpdatedNetworkData("ServerUpdateEnemyPositions", data, i);
+		std::cout << "Sending enemy positions to cliend of ID: " << i << std::endl;
+		NetworkingManager::SendUpdatedNetworkData("ServerUpdateEnemyPositions", data, i);
 	}
 }
 
@@ -331,6 +370,14 @@ void GameLevel::SyncPlayerReviveEvent(sf::Packet packet)
 	packet >> playerID;
 	HandlePlayerReviveEvent(playerID);
 	NetworkingManager::SendPlayerReviveData(playerID);
+}
+
+void GameLevel::SyncInventoryChangeEvent(sf::Packet packet)
+{
+	InventorySyncData data;
+	packet >> data;
+	HandleInventoryChangeEvent(data);
+	NetworkingManager::SendInventorySyncData(data);
 }
 
 ///CLIENT FUNCTIONS////////////////////////////////////////////////
@@ -374,6 +421,13 @@ void GameLevel::SpawnNetworkedEnemies(sf::Packet packet)
 	characterManager->spawnNetworkEnemies(result.enemiesInfo, result.length);
 }
 
+void GameLevel::SpawnNetworkedChests(sf::Packet packet)
+{
+	ChestSpawnInfoResult result;
+	packet >> result;
+	chestManager->spawnNetworkedChests(result, window, input);
+}
+
 void GameLevel::SyncNetworkEnemyPositions(sf::Packet packet)
 {
 	NetworkObjectUpdateData data;
@@ -382,6 +436,7 @@ void GameLevel::SyncNetworkEnemyPositions(sf::Packet packet)
 	for (int i = 0; i < data.enemyLength; i++)
 	{
 		EnemyNetworkObject enemy = enemyNetworkObjects[i];
+		std::cout << "ID: " << enemy.objectID << "Pos: " << enemy.position.x << ", " << enemy.position.y << std::endl;
 		characterManager->getEnemy(i)->setMoveDirection(enemy.velocity);
 		characterManager->getEnemy(i)->setPosition(enemy.position);
 		characterManager->getEnemy(i)->setFollowingTarget(GetPlayerFromIndex(enemy.targetedPlayerID));
@@ -431,4 +486,18 @@ void GameLevel::HandlePlayerDeath(int playerID)
 void GameLevel::HandlePlayerReviveEvent(int playerID)
 {
 	_players[playerID]->resetHealth();
+}
+
+void GameLevel::HandleInventoryChangeEvent(InventorySyncData data)
+{
+
+	//Take item from inventory
+	Inventory* inv = inventoryManager->getInventoryFromID(data.invID);
+	Slot* slot = inv->getSlot(data.slotID);
+	Item item = *slot->getItem();
+	//Move item to player slot
+	Inventory* otherInv = inventoryManager->getInventoryFromID(data.otherInvID);
+	std::cout << "HandleInventoryChangeEvent for passing to inventory: " << data.otherInvID << std::endl;
+	otherInv->addToSlot(data.otherInvSlotID, &item);
+	slot->clearItem();
 }

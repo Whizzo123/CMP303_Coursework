@@ -1,6 +1,6 @@
 #include "Item.h"
 
-Item::Item(std::string itemName, int stackSize)
+Item::Item(std::string itemName, int stackSize, ItemType myType)
 {
 	//Load texture from path
 	texture.loadFromFile("gfx/items/" + itemName + ".png");
@@ -10,6 +10,7 @@ Item::Item(std::string itemName, int stackSize)
 	//Initialize variables
 	this->itemName = itemName;
 	this->stackSize = stackSize;
+	itemType = myType;
 }
 
 std::string Item::getItemName()

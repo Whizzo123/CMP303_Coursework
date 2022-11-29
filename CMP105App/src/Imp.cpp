@@ -1,6 +1,7 @@
 #include "Imp.h"
 
-Imp::Imp(sf::Vector2f spawnPos, AudioManager* audio) : Enemy("ImpV2", spawnPos, sf::Vector2f(100, 100), 150.0f, 2, 2, 1, 150, audio)
+Imp::Imp(sf::Vector2f spawnPos, AudioManager* audio, int enemyID) 
+	: Enemy("ImpV2", spawnPos, sf::Vector2f(100, 100), 150.0f, 2, 2, 1, 150, audio, enemyID)
 {
 	//Initialize variables
 	setupAnimations();

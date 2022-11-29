@@ -3,7 +3,7 @@
 Armour::Armour() {}
 Armour::~Armour() {}
 
-Armour::Armour(std::string itemName, int stackSize, int armourValue, ArmourType armourType) : Item(itemName, stackSize)
+Armour::Armour(std::string itemName, int stackSize, int armourValue, ArmourType armourType) : Item(itemName, stackSize, ItemType::ARMOURITEM)
 {
 	this->armourValue = armourValue;
 	this->armourType = armourType;

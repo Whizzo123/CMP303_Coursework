@@ -27,12 +27,15 @@ public:
 	static void loadArmoursFromFile();
 	static std::vector<GameWeapons> getWeaponsLoaded();
 	static std::vector<GameArmour> getArmoursLoaded();
+	static int getItemID(std::string name);
+
 
 private:
 	//Vector for all loaded weapons
 	static std::vector<GameWeapons> weapons;
 	//Vector for all loaded armours
 	static std::vector<GameArmour> armours;
+	
 };
 
 

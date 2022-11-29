@@ -77,8 +77,12 @@ void Inventory::draw()
 	for (int i = 0; i < inventorySize; i++)
 	{
 		window->draw(slots[i]);
-		if(slots[i].getItem() != nullptr)
-			window->draw(*slots[i].getItem());
+		Slot* slot = &slots[i];
+		if (slot != nullptr)
+		{
+			if (slot->getItem() != nullptr)
+				window->draw(*slots[i].getItem());
+		}
 	}
 }
 
@@ -162,4 +166,29 @@ int Inventory::grabArmourValue()
 		}
 	}
 	return totalArmourValue;
+}
+
+int Inventory::getSlotID(Slot* slot)
+{
+	for (int i = 0; i < inventorySize; i++)
+	{
+		if (&slots[i] == slot)
+			return i;
+	}
+}
+
+int Inventory::getInventorySize()
+{
+	return inventorySize;
+}
+
+int Inventory::getNumOfOccupiedSlots()
+{
+	int count = 0;
+	for (int i = 0; i < inventorySize; i++)
+	{
+		if (slots[i].getItem() != nullptr)
+			count++;
+	}
+	return count;
 }

@@ -22,6 +22,8 @@ public:
 	float getCurrentHealth();
 	float getMaxHealth();
 	void resetHealth();
+	void setID(int id) { characterID = id; }
+	int getID() { return characterID; }
 protected:
 	void debugLog(std::string msg);
 	virtual void updateAnimations(float dt);
@@ -57,5 +59,6 @@ protected:
 	Inventory* inventory;
 	AudioManager* audio;
 	std::string damageAudioName;
+	int characterID;
 };
 

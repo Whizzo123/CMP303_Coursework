@@ -1,6 +1,6 @@
 #include "Potion.h"
 
-Potion::Potion(std::string potionName, int stackSize, Character* character) : Item(potionName, stackSize) 
+Potion::Potion(std::string potionName, int stackSize, Character* character) : Item(potionName, stackSize, ItemType::POTIONITEM) 
 {
 	this->character = character;
 }

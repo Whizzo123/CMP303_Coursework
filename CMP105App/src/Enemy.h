@@ -18,7 +18,8 @@ class Enemy : public Character
 {
 public:
 	Enemy() {};
-	Enemy(std::string textureName, sf::Vector2f pos, sf::Vector2f size, float speed, float maxHealth, float attackCooldown, float weaponDamage, float attackRange, AudioManager* audio);
+	Enemy(std::string textureName, sf::Vector2f pos, sf::Vector2f size, float speed, float maxHealth, float attackCooldown,
+		float weaponDamage, float attackRange, AudioManager* audio, int enemyID);
 	~Enemy() {};
 	bool getFollowing() { return following; }
 	void setFollowing(bool value) { following = value; }

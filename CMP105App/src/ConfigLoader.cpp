@@ -114,6 +114,21 @@ std::vector<GameWeapons> ConfigLoader::getWeaponsLoaded()
 	return weapons;
 }
 
+int ConfigLoader::getItemID(std::string name)
+{
+	for (int i = 0; i < weapons.size(); i++)
+	{
+		if (weapons[i].name == name)
+			return i;
+	}
+	for (int i = 0; i < armours.size(); i++)
+	{
+		if (armours[i].name == name)
+			return i;
+	}
+	return -1;
+}
+
 std::vector<GameArmour> ConfigLoader::getArmoursLoaded()
 {
 	return armours;

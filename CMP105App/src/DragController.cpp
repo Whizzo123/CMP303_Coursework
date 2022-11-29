@@ -35,6 +35,7 @@ void DragController::update(float dt)
 				if (holdingItem != nullptr)
 				{
 					dragging = true;
+					beginDragInventory = inventory;
 					beginDragSlot = slot;
 				}
 			}
@@ -69,8 +70,17 @@ void DragController::update(float dt)
 					//Give slot holding item
 					slot->setItem(new Armour(*(dynamic_cast<Armour*>(holdingItem))));
 				}
+				InventorySyncData data;
+				data.invID = inventoryManager->getIDForInventory(beginDragInventory);
+				data.slotID = beginDragInventory->getSlotID(beginDragSlot);
+				data.otherInvID = inventoryManager->getIDForInventory(inventory);
+				data.otherInvSlotID = inventory->getSlotID(slot);
+				data.playerID = NetworkingManager::GetMyConnectionIndex();
+				std::cout << "Sending inventory sync data" << std::endl;
+				NetworkingManager::SendInventorySyncData(data);
 				//Clear slot item was from
 				beginDragSlot->clearItem();
+				beginDragInventory = nullptr;
 				//Clear holding item
 				holdingItem = nullptr;
 				//End drag

@@ -4,7 +4,7 @@ class Minotaur : public Enemy
 {
 public:
 	Minotaur() {};
-	Minotaur(sf::Vector2f spawnPos, AudioManager* audio);
+	Minotaur(sf::Vector2f spawnPos, AudioManager* audio, int enemyID);
 	~Minotaur() {};
 	void update(float dt) override;
 	EnemyType getEnemyType() override;

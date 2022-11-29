@@ -1,7 +1,7 @@
 #include "Minotaur.h"
 
-Minotaur::Minotaur(sf::Vector2f spawnPos, AudioManager* audio) 
-	: Enemy("Minotaur", spawnPos, sf::Vector2f(150, 150), 125.0f, 4, 2, 2, 150, audio)
+Minotaur::Minotaur(sf::Vector2f spawnPos, AudioManager* audio, int enemyID) 
+	: Enemy("Minotaur", spawnPos, sf::Vector2f(150, 150), 125.0f, 4, 2, 2, 150, audio, enemyID)
 {
 	//Initialize variables
 	setupAnimations();

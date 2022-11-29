@@ -75,7 +75,6 @@ int NetworkingManager::FindReadySockets()
 {
 	_selector->wait();
 	int socketID = _selector->GrabReadySocket(_connections, _connectionIndex);
-	std::cout << "Searching" << std::endl;
 	return socketID;
 }
 
@@ -181,7 +180,7 @@ void NetworkingManager::SendUpdatedNetworkData(std::string eventCall, NetworkObj
 void NetworkingManager::SendPlayerAttackData(PlayerAttackData data)
 {
 	sf::Packet packet;
-	if (isServer)
+	if (isServer())
 	{
 		packet << "PlayerAttackedEvent";
 		packet << data;
@@ -202,7 +201,7 @@ void NetworkingManager::SendPlayerAttackData(PlayerAttackData data)
 void NetworkingManager::SendPlayerReviveData(int playerID)
 {
 	sf::Packet packet;
-	if (isServer)
+	if (isServer())
 	{
 		packet << "PlayerReviveEvent";
 		packet << sf::Int32(playerID);
@@ -218,6 +217,57 @@ void NetworkingManager::SendPlayerReviveData(int playerID)
 		packet << sf::Int32(playerID);
 		_mySocket->send(packet);
 	}
+}
+
+void NetworkingManager::SendInventorySyncData(InventorySyncData data)
+{
+	sf::Packet packet;
+	std::cout << "Entering NetworkingManager::SendInventorySyncData" << std::endl;
+	if (isServer())
+	{
+		
+		packet << "InventoryChangeEvent";
+		packet << data;
+		for (int i = 1; i < GetNumConnections(); i++)
+		{
+			if (i != data.playerID)
+			{
+				std::cout << "Sending inventory sync data from server" << std::endl;
+				_connections[i]->getConnectionSocket()->send(packet);
+			}
+		}
+	}
+	else
+	{
+		std::cout << "Sending inventory sync data from client to server" << std::endl;
+		packet << "SyncInventoryChangeEvent";
+		packet << data;
+		_mySocket->send(packet);
+	}
+}
+
+void NetworkingManager::SendChestSpawnInfoResult(ChestSpawnInfoResult result, int socketID)
+{
+	sf::Packet sendChestInfoPacket;
+	sendChestInfoPacket << "SpawnNetworkedChests";
+	sendChestInfoPacket << result;
+	_connections[socketID]->getConnectionSocket()->send(sendChestInfoPacket);
+}
+
+void NetworkingManager::SendNextLevelMessage()
+{
+	sf::Packet sendNextLevelPacket;
+	sendNextLevelPacket << "NextLevel";
+	if (isServer())
+	{
+		for (int i = 0; i < GetNumConnections(); i++)
+		{
+			if (i != NetworkingManager::GetMyConnectionIndex())
+				_connections[i]->getConnectionSocket()->send(sendNextLevelPacket);
+		}
+	}
+	else
+		_mySocket->send(sendNextLevelPacket);
 }
 
 bool NetworkingManager::JoinServer()
@@ -407,4 +457,65 @@ sf::Packet& operator << (sf::Packet& packet, const PlayerAttackData data)
 sf::Packet& operator >> (sf::Packet& packet, PlayerAttackData& data)
 {
 	return packet >> data.playerID >> data.enemyID;
+}
+
+sf::Packet& operator << (sf::Packet& packet, const InventorySyncData data)
+{
+	return packet << data.invID << data.slotID << data.playerID << data.otherInvID << data.otherInvSlotID << data.isAdding;
+}
+
+sf::Packet& operator >> (sf::Packet& packet, InventorySyncData& data)
+{
+	return packet >> data.invID >> data.slotID >> data.playerID >> data.otherInvID >> data.otherInvSlotID >> data.isAdding;
+}
+
+sf::Packet& operator << (sf::Packet& packet, const ItemData data)
+{
+	return packet << data.itemIndex << data.itemType;
+}
+sf::Packet& operator >> (sf::Packet& packet, ItemData& data)
+{
+	return packet >> data.itemIndex >> data.itemType;
+}
+sf::Packet& operator << (sf::Packet& packet, const ChestSpawnInfo data)
+{
+	packet << data.position << data.itemsCount;
+	for (int i = 0; i < data.itemsCount; i++)
+	{
+		packet << data.items[i];
+	}
+	return packet;
+}
+sf::Packet& operator >> (sf::Packet& packet, ChestSpawnInfo& data)
+{
+	packet >> data.position >> data.itemsCount;
+	data.items = new ItemData[data.itemsCount];
+	for (int i = 0; i < data.itemsCount; i++)
+	{
+		ItemData item;
+		packet >> item;
+		data.items[i] = item;
+	}
+	return packet;
+}
+sf::Packet& operator << (sf::Packet& packet, const ChestSpawnInfoResult data)
+{
+	packet << data.length;
+	for (int i = 0; i < data.length; i++)
+	{
+		packet << data.chestsInfo[i];
+	}
+	return packet;
+}
+sf::Packet& operator >> (sf::Packet& packet, ChestSpawnInfoResult& data)
+{
+	packet >> data.length;
+	data.chestsInfo = new ChestSpawnInfo[data.length];
+	for (int i = 0; i < data.length; i++)
+	{
+		ChestSpawnInfo info;
+		packet >> info;
+		data.chestsInfo[i] = info;
+	}
+	return packet;
 }

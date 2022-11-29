@@ -37,7 +37,6 @@ bool MSocketSelector::wait(float seconds)
 /// <returns></returns>
 int MSocketSelector::GrabReadySocket(NetworkConnection** connections, int numberOfConnections)
 {
-	std::cout << "Grabbing ready socket" << std::endl;
 	// Starts at 1 as the server is index of 0
 	for (int i = 1; i < numberOfConnections; i++)
 	{

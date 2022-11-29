@@ -21,17 +21,17 @@ void CharacterManager::spawnNetworkEnemies(EnemyInfo* info, int length)
 		switch (enemyInfo.enemyClass)
 		{
 		case IMP:
-			characters.push_back(new Imp(enemyInfo.spawnPosition, audio));
+			characters.push_back(new Imp(enemyInfo.spawnPosition, audio, i));
 			characters[i]->setMoveDirection(enemyInfo.patrolPosition);
 			characters[i]->setAlive(true);
 			break;
 		case GLADIATOR:
-			characters.push_back(new Gladiator(enemyInfo.spawnPosition, audio));
+			characters.push_back(new Gladiator(enemyInfo.spawnPosition, audio, i));
 			characters[i]->setMoveDirection(enemyInfo.patrolPosition);
 			characters[i]->setAlive(true);
 			break;
 		case MINOTAUR:
-			characters.push_back( new Minotaur(enemyInfo.spawnPosition, audio));
+			characters.push_back( new Minotaur(enemyInfo.spawnPosition, audio, i));
 			characters[i]->setMoveDirection(enemyInfo.patrolPosition);
 			characters[i]->setAlive(true);
 			break;
@@ -75,15 +75,15 @@ void CharacterManager::spawn(std::string characterName, sf::Vector2f spawnPos)
 		{
 			if (characterName == "Imp")
 			{
-				characters[i] = new Imp(spawnPos, audio);
+				characters[i] = new Imp(spawnPos, audio, i);
 			}
 			else if (characterName == "Gladiator")
 			{
-				characters[i] = new Gladiator(spawnPos, audio);
+				characters[i] = new Gladiator(spawnPos, audio, i);
 			}
 			else if (characterName == "Minotaur")
 			{
-				characters[i] = new Minotaur(spawnPos, audio);
+				characters[i] = new Minotaur(spawnPos, audio, i);
 			}
 			characters[i]->setAlive(true);
 			break;
@@ -99,13 +99,13 @@ void CharacterManager::spawnAllCharacters()
 		int random = rand() % 100 + 1;
 		//If less than 60 spawn imp
 		if (random < 60)
-			characters.push_back(new Imp(map->findRandomSpawnPos(), audio));
+			characters.push_back(new Imp(map->findRandomSpawnPos(), audio, i));
 		//If between 60 and 84 spawn gladiator
 		else if (random < 85)
-			characters.push_back(new Gladiator(map->findRandomSpawnPos(), audio));
+			characters.push_back(new Gladiator(map->findRandomSpawnPos(), audio, i));
 		//If above 85 spawn minotaur
 		else
-			characters.push_back(new Minotaur(map->findRandomSpawnPos(), audio));
+			characters.push_back(new Minotaur(map->findRandomSpawnPos(), audio, i));
 		characters[i]->setAlive(true);
 		characters[i]->setIsServer(true);
 	}

@@ -71,7 +71,10 @@ void Player::handleInput(float dt)
 		if (Collision::checkBoundingBox(this, dungeonExit))
 		{
 			audio->playSoundbyName("DungeonDoor");
-			dungeonExit->loadLevel();
+			//Send Network Message to trigger loading of next level across all machines
+			NetworkingManager::SendNextLevelMessage();
+			if(NetworkingManager::isServer())
+				dungeonExit->loadLevel();
 			return;
 		}
 		//Deal with inventory and chest interaction
@@ -180,11 +183,14 @@ void Player::attack()
 	//If has enemyTarget
 	if (enemyTarget != nullptr)
 	{
+		PlayerAttackData data;
+		data.playerID = NetworkingManager::GetMyConnectionIndex();
+		data.enemyID = enemyTarget->getID();
+		NetworkingManager::SendPlayerAttackData(data);
 		//Damage target using weapon stats
 		enemyTarget->damage(dynamic_cast<Weapon*>(inventory->getSlot(10)->getItem())->getDamage(), getPosition());
 		//Play attack sound
 		audio->playSoundbyName("DwarfAttack");
-		justAttacked = true;
 	}
 }
 
@@ -246,6 +252,8 @@ void Player::setNextLevel(int* nextLevel)
 
 void Player::manualAttack()
 {
-	attack();
-	ResetJustAttacked();
+	//Damage target using weapon stats
+	enemyTarget->damage(dynamic_cast<Weapon*>(inventory->getSlot(10)->getItem())->getDamage(), getPosition());
+	//Play attack sound
+	audio->playSoundbyName("DwarfAttack");
 }

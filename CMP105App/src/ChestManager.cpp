@@ -28,7 +28,7 @@ void ChestManager::spawn(DungeonDiverTileMap* map, sf::RenderWindow* window, Inp
 		chests.push_back(new Chest("Chest_Closed", spawnPos, sf::Vector2f(75, 75), window, input));
 		//Add to inventory map
 		inventoryManager->addToChestInventories(chests[i], new Inventory(window, input, 3));
-		//Loop 3 times
+		//Loop 2 times
 		for (int j = 0; j < 2; j++)
 		{
 			//Pick random number between 0 and 2
@@ -60,6 +60,48 @@ void ChestManager::spawn(DungeonDiverTileMap* map, sf::RenderWindow* window, Inp
 			}
 		}
 	}
+	std::cout << "Spawning server chests: " << numberToSpawn << std::endl;
+}
+
+void ChestManager::spawnNetworkedChests(ChestSpawnInfoResult result, sf::RenderWindow* window, Input* input)
+{
+	for (int i = 0; i < result.length; i++)
+	{
+		ChestSpawnInfo info = result.chestsInfo[i];
+		//Grab chest spawn position
+		sf::Vector2f spawnPos = info.position;
+		//Add to chest vector
+		chests.push_back(new Chest("Chest_Closed", spawnPos, sf::Vector2f(75, 75), window, input));
+		//Add to inventory map
+		inventoryManager->addToChestInventories(chests[i], new Inventory(window, input, 3));
+		for (int j = 0; j < info.itemsCount; j++)
+		{
+			ItemData data = info.items[j];
+			int index = data.itemIndex;
+			switch (data.itemType)
+			{
+			case 0:
+			{
+				GameWeapons weaponProto = ConfigLoader::getWeaponsLoaded()[index];
+				//Add weapon to slot in chest
+				inventoryManager->getChestInventory(chests[i])->addToRandomSlot(new Weapon(weaponProto.name, 1, weaponProto.damage, weaponProto.speed));
+				break;
+			}
+			case 1:
+			{
+				GameArmour armourProto = ConfigLoader::getArmoursLoaded()[index];
+				//Add armour piece to slot in chest
+				inventoryManager->getChestInventory(chests[i])->addToRandomSlot(new Armour(armourProto.name, 1, armourProto.armourValue, ArmourType(armourProto.armourType)));
+				break;
+			}
+			case 2:
+				//Add health potion to chest
+				inventoryManager->getChestInventory(chests[i])->addToRandomSlot(new Potion("Health Potion", 1, nullptr));
+				break;
+			}
+		}
+	}
+	std::cout << "Spawning networked chests" << chests.size() << std::endl;
 }
 
 void ChestManager::handleInput()
@@ -127,4 +169,14 @@ void ChestManager::closeChest(Chest* chest)
 bool ChestManager::isChestOpen(Chest* chest)
 {
 	return inventoryManager->getChestInventory(chest)->getShowing();
+}
+
+int ChestManager::getIDForChest(Chest* chest)
+{
+	for (int i = 0; i < chests.size(); i++)
+	{
+		if (chests[i] == chest)
+			return i;
+	}
+	return -1;
 }

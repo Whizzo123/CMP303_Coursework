@@ -15,6 +15,9 @@ public:
 	void draw(sf::RenderWindow* window);
 	void addToChestInventories(Chest* chest, Inventory* inventory);
 	Inventory* getChestInventory(Chest* chest);
+	Inventory* getInventoryFromID(int ID);
+	int getIDForInventory(Inventory* inventory);
+	Chest* getChestForInventory(Inventory* inv);
 private:
 	std::vector<Inventory*> inventories;
 	std::map<Chest*, Inventory*> chestToInventory;

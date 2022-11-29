@@ -4,10 +4,25 @@
 #include "NetworkConnection.h"
 #include "MSocketSelector.h"
 #include <string>
-#include "NetworkPlayer.h"
+#include "../NetworkObject.h"
 #include "../Enemy.h"
 
-//const float NETWORK_TICK_TIME = 0.2f;
+
+struct InventorySyncData
+{
+	sf::Int32 invID;
+	sf::Int32 slotID;
+	sf::Int32 playerID;
+	sf::Int32 otherInvID;
+	sf::Int32 otherInvSlotID;
+	sf::Int32 isAdding;
+};
+
+struct ItemData
+{
+	sf::Int32 itemIndex;
+	sf::Int32 itemType;
+};
 
 struct PlayerAttackData
 {
@@ -20,6 +35,21 @@ struct EnemySpawnInfoResult
 	sf::Int32 length;
 	EnemyInfo* enemiesInfo;
 };
+
+struct ChestSpawnInfo
+{
+	sf::Vector2f position;
+	sf::Int32 itemsCount;
+	ItemData* items;
+};
+
+struct ChestSpawnInfoResult
+{
+	sf::Int32 length;
+	ChestSpawnInfo* chestsInfo;
+};
+
+
 
 struct NetworkObjectPositionSyncVar
 {
@@ -49,7 +79,7 @@ struct NetworkObjectUpdateData
 	EnemyNetworkObject* enemyNetworkObjects;
 };
 
-static class NetworkingManager
+class NetworkingManager
 {
 public:
 	static bool Find();
@@ -71,6 +101,9 @@ public:
 	static void SendUpdatedNetworkData(std::string eventCall, NetworkObjectUpdateData data, int socketID = -1);
 	static void SendPlayerAttackData(PlayerAttackData data);
 	static void SendPlayerReviveData(int playerID);
+	static void SendInventorySyncData(InventorySyncData data);
+	static void SendChestSpawnInfoResult(ChestSpawnInfoResult result, int socketID);
+	static void SendNextLevelMessage();
 	static int GetNumConnections() { return _connectionIndex; }
 	static int GetMyConnectionIndex() { return _myConnectionIndex; }
 	static std::map<int, bool> GetNObjectChangeState() { return changeStateOfNetworkObjects; }
@@ -144,4 +177,11 @@ sf::Packet& operator << (sf::Packet& packet, const EnemyNetworkObject data);
 sf::Packet& operator >> (sf::Packet& packet, EnemyNetworkObject& data);
 sf::Packet& operator << (sf::Packet& packet, const PlayerAttackData data);
 sf::Packet& operator >> (sf::Packet& packet, PlayerAttackData& data);
-
+sf::Packet& operator << (sf::Packet& packet, const InventorySyncData data);
+sf::Packet& operator >> (sf::Packet& packet, InventorySyncData& data);
+sf::Packet& operator << (sf::Packet& packet, const ItemData data);
+sf::Packet& operator >> (sf::Packet& packet, ItemData& data);
+sf::Packet& operator << (sf::Packet& packet, const ChestSpawnInfo data);
+sf::Packet& operator >> (sf::Packet& packet, ChestSpawnInfo& data);
+sf::Packet& operator << (sf::Packet& packet, const ChestSpawnInfoResult data);
+sf::Packet& operator >> (sf::Packet& packet, ChestSpawnInfoResult& data);

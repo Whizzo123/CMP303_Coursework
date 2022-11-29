@@ -10,7 +10,7 @@ class GameLevel : public Level
 public:
 	GameLevel() {};
 	GameLevel(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud, Player* player, 
-		int levelIndex, int numberOfEnemies, int numberOfChests, std::vector<int>* mapData, sf::Vector2u mapDimensions);
+		sf::Vector2f spawnPoint, int levelIndex, int numberOfEnemies, int numberOfChests, std::vector<int>* mapData, sf::Vector2u mapDimensions);
 	~GameLevel() {}
 	void update(float dt) ;
 	void handleInput(float dt) override;
@@ -22,6 +22,7 @@ public:
 	void handleNetwork(float dt);
 	void SyncNetworkPosition(sf::Packet packet);
 	void GetEnemyInfoForClient(int socketID);
+	void GetChestInfoForClient(int socketID);
 	void SyncNetworkPlayerPositions(sf::Packet packet);
 	void PacketUpdatedNetworkObjectData();
 	std::vector<NetworkObject> GetUpdatedNetworkObjects();
@@ -35,6 +36,9 @@ public:
 	void HandlePlayerDeath(int playerID);
 	void HandlePlayerReviveEvent(int playerID);
 	void SyncPlayerReviveEvent(sf::Packet packet);
+	void SyncInventoryChangeEvent(sf::Packet packet);
+	void HandleInventoryChangeEvent(InventorySyncData data);
+	void SpawnNetworkedChests(sf::Packet packet);
 protected:
 	
 protected:
@@ -52,13 +56,14 @@ protected:
 	sf::Text pauseText;
 	sf::Font pauseFont;
 	LevelLoaderButton* skipLevelButton;
-	std::map<int, Player*> _players;
-	int _numberOfEnemies;
-	int _numberOfChests;
 private:
 	sf::Vector2f pauseTextPos;
 	sf::Vector2f skipButtonPos;
 	int levelIndex;
 	float currentNetworkTickTime = 0.0f;
+	int _numberOfEnemies;
+	int _numberOfChests; 
+	std::map<int, Player*> _players;
+	sf::Vector2f _spawnPoint;
 };
 

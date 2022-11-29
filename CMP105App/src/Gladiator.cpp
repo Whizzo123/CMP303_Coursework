@@ -1,6 +1,7 @@
 #include "Gladiator.h"
 
-Gladiator::Gladiator(sf::Vector2f spawnPos, AudioManager* audio) : Enemy("Gladiator-Sprite Sheet", spawnPos, sf::Vector2f(100, 100), 150.0f, 3, 1.5, 2, 150, audio)
+Gladiator::Gladiator(sf::Vector2f spawnPos, AudioManager* audio, int enemyID) 
+	: Enemy("Gladiator-Sprite Sheet", spawnPos, sf::Vector2f(100, 100), 150.0f, 3, 1.5, 2, 150, audio, enemyID)
 {
 	//Initialize variables
 	setupAnimations();

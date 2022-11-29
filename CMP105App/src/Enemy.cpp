@@ -1,7 +1,7 @@
 #include "Enemy.h"
 
 Enemy::Enemy(std::string textureName, sf::Vector2f pos, sf::Vector2f size, float speed, float maxHealth, float attackCooldown, float weaponDamage,
-	float attackRange, AudioManager* audio) : Character(textureName, pos, size, speed, maxHealth, audio)
+	float attackRange, AudioManager* audio, int enemyID) : Character(textureName, pos, size, speed, maxHealth, audio)
 {
 	//Initialize variables
 	following = false;
@@ -11,6 +11,7 @@ Enemy::Enemy(std::string textureName, sf::Vector2f pos, sf::Vector2f size, float
 	this->weaponDamage = weaponDamage;
 	this->attackRange = attackRange;
 	this->currentMoveDirection = sf::Vector2f(0.0f, 0.0f);
+	setID(enemyID);
 }
 
 void Enemy::update(float dt)

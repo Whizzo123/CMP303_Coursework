@@ -6,7 +6,7 @@ class Imp : public Enemy
 {
 public:
 	Imp() {}
-	Imp(sf::Vector2f spawnPos, AudioManager* audio);
+	Imp(sf::Vector2f spawnPos, AudioManager* audio, int enemyID);
 	~Imp() { std::cout << "Calling Imp Deconstructor" << std::endl; };
 	void update(float dt) override;
 	EnemyType getEnemyType() override;

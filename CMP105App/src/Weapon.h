@@ -4,7 +4,7 @@ class Weapon : public Item
 {
 public:
 	Weapon() {}
-	Weapon(std::string itemName, int stackSize, int damage, int speed) : Item(itemName, stackSize)
+	Weapon(std::string itemName, int stackSize, int damage, int speed) : Item(itemName, stackSize, ItemType::WEAPONITEM)
 	{
 		this->damage = damage;
 		this->speed = speed;

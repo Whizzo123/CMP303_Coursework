@@ -17,17 +17,7 @@ void InventoryManager::addToInventories(Inventory* inventory)
 
 Inventory* InventoryManager::getInventory(sf::Vector2i currentMousePos)
 {
-	//Loop through inventories
-	for (int i = 0; i < inventories.size(); i++)
-	{
-		//Check for collision with mouse
-		if (Collision::checkBoundingBox(inventories[i], currentMousePos))
-		{
-			//If so return inventory
-			return inventories[i];
-		}
-	}
-	//Grab map iterator
+	////Grab map iterator
 	std::map<Chest*, Inventory*>::iterator it = chestToInventory.begin();
 	//Loop through map
 	while (it != chestToInventory.end())
@@ -44,6 +34,16 @@ Inventory* InventoryManager::getInventory(sf::Vector2i currentMousePos)
 		}
 		//Increment iterator
 		it++;
+	}
+	//Loop through inventories
+	for (int i = 0; i < inventories.size(); i++)
+	{
+		//Check for collision with mouse
+		if (Collision::checkBoundingBox(inventories[i], currentMousePos))
+		{
+			//If so return inventory
+			return inventories[i];
+		}
 	}
 	return nullptr;
 }
@@ -92,9 +92,34 @@ void InventoryManager::draw(sf::RenderWindow* window)
 void InventoryManager::addToChestInventories(Chest* chest, Inventory* inventory)
 {
 	chestToInventory[chest] = inventory;
+	inventories.push_back(inventory);
 }
 
 Inventory* InventoryManager::getChestInventory(Chest* chest)
 {
 	return chestToInventory[chest];
+}
+
+Chest* InventoryManager::getChestForInventory(Inventory* inventory)
+{
+	for (auto chest : chestToInventory)
+	{
+		if (chest.second == inventory)
+			return chest.first;
+	}
+	return nullptr;
+}
+
+Inventory* InventoryManager::getInventoryFromID(int id)
+{
+	return inventories[id];
+}
+
+int InventoryManager::getIDForInventory(Inventory* inventory)
+{
+	for (int i = 0; i < inventories.size(); i++)
+	{
+		if (inventories[i] == inventory)
+			return i;
+	}
 }

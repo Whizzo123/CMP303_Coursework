@@ -19,6 +19,10 @@ public:
 	void setShowing(bool value);
 	bool getShowing();
 	int grabArmourValue();
+	int getSlotID(Slot* slot);
+	int getInventorySize();
+	int getNumOfOccupiedSlots();
+	
 private:
 	Slot* slots;
 	sf::Texture texture;
