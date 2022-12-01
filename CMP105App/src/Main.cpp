@@ -155,6 +155,7 @@ int main()
 		// Update input class, handle pressed keys
 		// Must be done last.
 		input.update();
+		NetworkingManager::UpdateTime(deltaTime);
 		//If current level has been given next level index
 		if (levels[currentLevelIndex]->getNextLevel() != -1)
 		{

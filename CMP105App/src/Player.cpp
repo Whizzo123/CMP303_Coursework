@@ -16,6 +16,11 @@ Player::Player(std::string textureName, sf::Vector2f pos, sf::Vector2f size, flo
 	this->dungeonExit = dungeonExit;
 	this->damageAudioName = "DwarfDamage";
 	justAttacked = false;
+	// Initialise last velocities array
+	for (int i = 0; i < 2; i++)
+	{
+		lastPositions[i] = new PositionRecording(NetworkingManager::GetCurrentTime(), pos);
+	}
 };
 
 Player::~Player(){}
@@ -24,6 +29,11 @@ void Player::handleInput(float dt)
 {
 	if (input == nullptr)
 	{
+		calculateNewVelocity();
+		if (getPosition() != lastPositions[1]->position && velocity == sf::Vector2f(0.0f, 0.0f))
+		{
+			setPosition(lerp(getPosition(), lastPositions[1]->position, dt));
+		}
 		return;
 	}
 	//Set velocity to 0
@@ -31,21 +41,21 @@ void Player::handleInput(float dt)
 	//Check for input on WASD keys
 	if (input->isKeyDown(sf::Keyboard::W))
 	{
-		velocity.y -= speed * dt;
+		velocity.y -= 1.0f;
 	}
 	if (input->isKeyDown(sf::Keyboard::S))
 	{
-		velocity.y += speed * dt;
+		velocity.y += 1.0f;
 	}
 	if (input->isKeyDown(sf::Keyboard::A))
 	{
-		velocity.x -= speed * dt;
+		velocity.x -= 1.0f;
 		walkAnimation.setFlipped(true);
 		idleAnimation.setFlipped(true);
 	}
 	if (input->isKeyDown(sf::Keyboard::D))
 	{
-		velocity.x += speed * dt;
+		velocity.x += 1.0f;
 		walkAnimation.setFlipped(false);
 		idleAnimation.setFlipped(false);
 	}
@@ -112,7 +122,7 @@ void Player::update(float dt)
 		audio->getSound("DwarfWalk")->stop();
 	}
 	//Move player
-	move(velocity);
+	move(velocity * speed * dt);
 	//Use last direction to alter attack rect
 	if (lastDirection.x < 0)
 		attackRect = sf::FloatRect(getCollisionBox().left - getSize().x, getCollisionBox().top - getSize().y, getSize().x * 1.25, getSize().y * 3);
@@ -256,4 +266,91 @@ void Player::manualAttack()
 	enemyTarget->damage(dynamic_cast<Weapon*>(inventory->getSlot(10)->getItem())->getDamage(), getPosition());
 	//Play attack sound
 	audio->playSoundbyName("DwarfAttack");
+}
+
+void Player::updateVelocity(sf::Vector2f newVelocity, float time)
+{
+	// Copy array
+	PositionRecording* tempVelocities[2];
+	for (int i = 0; i < 2; i++)
+	{
+		tempVelocities[i] = new PositionRecording(lastPositions[i]->timeOfRecording, lastPositions[i]->position);
+		std::cout << "Temp " << i << ": " << tempVelocities[i]->position.x << "," << tempVelocities[i]->position.y << std::endl;
+	}
+	// Shift array
+	lastPositions[0] = new PositionRecording(tempVelocities[1]->timeOfRecording, tempVelocities[1]->position);
+	
+	// Add new velocity to the end
+	lastPositions[1] = new PositionRecording(time, newVelocity);
+}
+
+void Player::calculateNewVelocity()
+{
+	float currentTime = NetworkingManager::GetCurrentTime();
+	for (int i = 0; i < 2; i++)
+	{
+		std::cout << "LastPosition " << i << ": " << lastPositions[i]->position.x << "," << lastPositions[i]->position.y << std::endl;
+	}
+	// Calculate average distance
+	float averageDistanceX = (lastPositions[1]->position.x - lastPositions[0]->position.x);
+	std::cout << "AverageDistance X: " << averageDistanceX << std::endl;
+	float averageDistanceY = (lastPositions[1]->position.y - lastPositions[0]->position.y);
+	std::cout << "AverageDistance Y: " << averageDistanceY << std::endl;
+	// Calculate average time
+	float averageTime = (lastPositions[1]->timeOfRecording - lastPositions[0]->timeOfRecording);
+	for (int i = 0; i < 2; i++)
+	{
+		std::cout << "Last Position " << i << " time: " << lastPositions[i]->timeOfRecording << std::endl;
+	}
+	std::cout << "AverageTime: " << averageTime << std::endl;
+	// Calculate speed
+	float speedX = 0.0f;
+	float speedY = 0.0f;
+	if(averageDistanceX != 0)
+		speedX = averageDistanceX / averageTime;
+	if(averageDistanceY != 0)
+		speedY = averageDistanceY / averageTime;
+	// Calculate displacement
+	float displacementX = speedX * (currentTime - lastPositions[1]->timeOfRecording);
+	std::cout << "Displacement X: " << displacementX << std::endl;
+	float displacementY = speedY * (currentTime - lastPositions[1]->timeOfRecording);
+	std::cout << "Displacement Y: " << displacementY << std::endl;
+	// Calculate new position
+	if (displacementX != 0 || displacementY != 0)
+	{
+		sf::Vector2f newPosition(getPosition().x + displacementX, getPosition().y + displacementY);
+		velocity = normalize(newPosition - getPosition());
+		std::cout << "New Position: " << newPosition.x << ", " << newPosition.y << std::endl;
+		std::cout << "Current Position: " << getPosition().x << ", " << getPosition().y << std::endl;
+		std::cout << "New Velocity " << velocity.x << "," << velocity.y << std::endl;
+	}
+	else
+		velocity = sf::Vector2f(0.0f, 0.0f);
+}
+
+sf::Vector2f Player::normalize(sf::Vector2f vector)
+{
+	float magnitude = sqrt(pow(vector.x, 2) + pow(vector.y, 2));
+	if (magnitude == 0)
+		return sf::Vector2f(0.0f, 0.0f);
+	return sf::Vector2f(vector.x / magnitude, vector.y / magnitude);
+}
+
+void Player::setPlayerPosition(sf::Vector2f pos)
+{
+	setPosition(pos);
+	for (int i = 0; i < 2; i++)
+	{
+		lastPositions[i] = new PositionRecording(NetworkingManager::GetCurrentTime(), pos);
+	}
+}
+
+sf::Vector2f Player::lerp(sf::Vector2f vectorA, sf::Vector2f vectorB, float time)
+{
+	return sf::Vector2f(lerp(vectorA.x, vectorB.x, time), lerp(vectorA.y, vectorB.y, time));
+}
+
+float Player::lerp(float a, float b, float time)
+{
+	return a + time * (b - a);
 }

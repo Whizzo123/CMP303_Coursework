@@ -230,7 +230,7 @@ void GameLevel::switchToLevel(std::map<int, Player*> players)
 	cursor = new Cursor(window, inventoryManager, input, _players[NetworkingManager::GetMyConnectionIndex()]);
 	background = new Background(window, _players[NetworkingManager::GetMyConnectionIndex()]);
 	sf::Vector2f spawnPos = sf::Vector2f(rand() % ((int)_spawnPoint.x + 100) + ((int)_spawnPoint.x - 100), (int)_spawnPoint.y);
-	_players[NetworkingManager::GetMyConnectionIndex()]->setPosition(spawnPos);
+	_players[NetworkingManager::GetMyConnectionIndex()]->setPlayerPosition(spawnPos);
 	_players[NetworkingManager::GetMyConnectionIndex()]->setChestManager(chestManager);
 	_players[NetworkingManager::GetMyConnectionIndex()]->setDungeonExit(dungeonExit);
 	_players[NetworkingManager::GetMyConnectionIndex()]->setNextLevel(&nextLevel);
@@ -270,7 +270,8 @@ void GameLevel::SyncNetworkPosition(sf::Packet packet)
 	for (int i = 0; i < updatedObjects.playerLength; i++)
 	{
 		sf::Vector2f pos = updatedObjects.playerPosSyncVars[i].newPosition;
-		_players[updatedObjects.playerPosSyncVars[i].objectID]->setPosition(pos);
+		//_players[updatedObjects.playerPosSyncVars[i].objectID]->setPosition(pos);
+		_players[updatedObjects.playerPosSyncVars[i].objectID]->updateVelocity(pos, NetworkingManager::GetCurrentTime());
 	}
 	for (int i = 1; i < NetworkingManager::GetNumConnections(); i++)
 	{
@@ -341,7 +342,6 @@ void GameLevel::ServerUpdateEnemyPositions()
 		enemy.velocity = enemyTargetPositions[i];
 		enemy.targetedPlayerID = GetIndexForPlayer(enemyTargets[i]);
 		enemyNetworkObjects[i] = enemy;
-		std::cout << "ID: " << enemy.objectID << "Pos: " << enemy.position.x << ", " << enemy.position.y << std::endl;
 	}
 	NetworkObjectUpdateData data;
 	data.enemyLength = length;
@@ -389,7 +389,9 @@ void GameLevel::SyncNetworkPlayerPositions(sf::Packet packet)
 	{
 		sf::Vector2f pos = result.resultPositions[i];
 		if (i != NetworkingManager::GetMyConnectionIndex())
-			_players[i]->setPosition(pos);
+		{
+			_players[i]->updateVelocity(pos, NetworkingManager::GetCurrentTime());
+		}
 	}
 }
 
@@ -436,7 +438,6 @@ void GameLevel::SyncNetworkEnemyPositions(sf::Packet packet)
 	for (int i = 0; i < data.enemyLength; i++)
 	{
 		EnemyNetworkObject enemy = enemyNetworkObjects[i];
-		std::cout << "ID: " << enemy.objectID << "Pos: " << enemy.position.x << ", " << enemy.position.y << std::endl;
 		characterManager->getEnemy(i)->setMoveDirection(enemy.velocity);
 		characterManager->getEnemy(i)->setPosition(enemy.position);
 		characterManager->getEnemy(i)->setFollowingTarget(GetPlayerFromIndex(enemy.targetedPlayerID));
@@ -479,7 +480,7 @@ void GameLevel::HandlePlayerDeath(int playerID)
 	std::cout << "Handling player death" << std::endl;
 	_players[playerID]->resetHealth();
 	sf::Vector2f pos = sf::Vector2f(rand() % 500 + 200, 275);
-	_players[playerID]->setPosition(pos);
+	_players[playerID]->setPlayerPosition(pos);
 	NetworkingManager::SendPlayerReviveData(playerID);
 }
 

@@ -16,6 +16,8 @@ std::map<int, bool> NetworkingManager::changeStateOfNetworkObjects = std::map<in
 std::vector<NetworkObject*> NetworkingManager::networkObjects = std::vector<NetworkObject*>();
 std::map<int, NetworkObject*> NetworkingManager::_playerNetworkObjects = std::map<int, NetworkObject*>();
 std::map<int, bool> NetworkingManager::socketIDToCharacterInitialised = std::map<int, bool>();
+float NetworkingManager::networkTime = 0.0f;
+bool NetworkingManager::startTime = false;
 
 bool NetworkingManager::Find()
 {
@@ -42,9 +44,13 @@ bool NetworkingManager::StartServer(Input* input, sf::RenderWindow* window, Audi
 	sendPacket << sf::String("Hello this is the server!!!");
 	_connections[_connectionIndex]->getConnectionSocket()->send(sendPacket);
 	// Send the client connection index to it
+	auto orgTime = system_clock::now();
+	std::time_t end_time = std::chrono::system_clock::to_time_t(orgTime);
+	sf::Int32 time = sf::Int32(end_time);
 	sf::Packet connectionIndexPacket;
-	connectionIndexPacket << sf::Int32(_connectionIndex);
+	connectionIndexPacket << sf::Int32(_connectionIndex) << time;
 	_connections[_connectionIndex]->getConnectionSocket()->send(connectionIndexPacket);
+	StartTime(0.0f);
 	// Increment connection index
 	_connectionIndex++;
 	_serverStarted = true;
@@ -67,6 +73,9 @@ bool NetworkingManager::StartClient(Input* input, sf::RenderWindow* window, Audi
 	sf::Packet connectionIndexRecvPacket;
 	_mySocket->recieve(connectionIndexRecvPacket);
 	connectionIndexRecvPacket >> _myConnectionIndex;
+	sf::Int32 time;
+	connectionIndexRecvPacket >> time;
+	StartTime(std::chrono::system_clock::to_time_t(system_clock::now()) - time);
 	_clientStarted = true;
 	return true;
 }
@@ -268,6 +277,12 @@ void NetworkingManager::SendNextLevelMessage()
 	}
 	else
 		_mySocket->send(sendNextLevelPacket);
+}
+
+void NetworkingManager::StartTime(float offsetTime) 
+{
+	startTime = true; 
+	networkTime += offsetTime; 
 }
 
 bool NetworkingManager::JoinServer()
@@ -518,4 +533,13 @@ sf::Packet& operator >> (sf::Packet& packet, ChestSpawnInfoResult& data)
 		data.chestsInfo[i] = info;
 	}
 	return packet;
+}
+
+sf::Packet& operator << (sf::Packet& packet, const milliseconds data)
+{
+	return packet << data;
+}
+sf::Packet& operator >> (sf::Packet* packet, milliseconds& data)
+{
+	return packet >> data;
 }

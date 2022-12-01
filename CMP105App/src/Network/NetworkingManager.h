@@ -6,7 +6,9 @@
 #include <string>
 #include "../NetworkObject.h"
 #include "../Enemy.h"
+#include <chrono>
 
+using namespace std::chrono;
 
 struct InventorySyncData
 {
@@ -114,6 +116,12 @@ public:
 	static bool IsCharacterInitialised(int socketID) { return socketIDToCharacterInitialised[socketID]; }
 	static void AddPlayerNetworkObject(int index, NetworkObject* player) { _playerNetworkObjects[index] = player; }
 	static NetworkObject* GetPlayerNetworkObject(int index) { return _playerNetworkObjects[index]; }
+	static float GetCurrentTime() { return networkTime; }
+	static void UpdateTime(float deltaTime) { if (startTime) { networkTime += deltaTime; } }
+	static void StartTime(float offsetTime);
+
+
+
 	static const unsigned short port = 4444;
 	static const int numberOfConnectionsAllowed = 2;
 	//static Player* localPlayer;
@@ -124,7 +132,6 @@ private:
 	static bool _server;
 	static bool _serverStarted;
 	static NetworkConnection** _connections; 
-	//static std::map<int, Player*> _players;
 	static std::map<int, NetworkObject*> _playerNetworkObjects;
 	static int _connectionIndex;
 	static MListener* _listener;
@@ -136,7 +143,8 @@ private:
 	static std::map<int, bool> changeStateOfNetworkObjects;
 	static std::vector<NetworkObject*> networkObjects;
 	static std::map<int, bool> socketIDToCharacterInitialised;
-	
+	static float networkTime;
+	static bool startTime;
 };
 
 

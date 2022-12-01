@@ -6,6 +6,17 @@
 #include <functional>
 #include "Network/NetworkingManager.h"
 
+struct PositionRecording
+{
+	PositionRecording(float time, sf::Vector2f pos)
+	{
+		timeOfRecording = time;
+		position = pos;
+	}
+	float timeOfRecording;
+	sf::Vector2f position;
+};
+
 class Player : public Character
 {
 public:
@@ -33,6 +44,12 @@ public:
 	void ResetJustAttacked() { justAttacked = false; }
 	Character* GetEnemyTarget() { return enemyTarget; }
 	void manualAttack();
+	void updateVelocity(sf::Vector2f newVelocity, float time);
+	void calculateNewVelocity();
+	sf::Vector2f normalize(sf::Vector2f vector);
+	void setPlayerPosition(sf::Vector2f pos);
+	sf::Vector2f lerp(sf::Vector2f vectorA, sf::Vector2f vectorB, float time);
+	float lerp(float a, float b, float time);
 private:
 	sf::RectangleShape attackRectDebug;
 	sf::FloatRect attackRect;
@@ -45,6 +62,7 @@ private:
 	float currentAttackTimer;
 	int* nextLevel;
 	bool justAttacked;
+	PositionRecording* lastPositions[2];
 private:
 	void attack();
 protected:
