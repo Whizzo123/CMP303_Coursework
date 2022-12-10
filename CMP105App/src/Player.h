@@ -43,13 +43,15 @@ public:
 	bool DidJustAttack() { return justAttacked; }
 	void ResetJustAttacked() { justAttacked = false; }
 	Character* GetEnemyTarget() { return enemyTarget; }
-	void manualAttack();
+	void manualAttack(int damage);
 	void updateVelocity(sf::Vector2f newVelocity, float time);
 	void calculateNewVelocity();
 	sf::Vector2f normalize(sf::Vector2f vector);
 	void setPlayerPosition(sf::Vector2f pos);
 	sf::Vector2f lerp(sf::Vector2f vectorA, sf::Vector2f vectorB, float time);
 	float lerp(float a, float b, float time);
+	bool isDead() { return dead; }
+	void switchAnimToIdle();
 private:
 	sf::RectangleShape attackRectDebug;
 	sf::FloatRect attackRect;

@@ -70,9 +70,11 @@ bool NetworkingManager::StartClient(Input* input, sf::RenderWindow* window, Audi
 	_mySocket->recieve(recievePacket);
 	sf::String recievedStringData;
 	recievePacket >> recievedStringData;
+	std::cout << "Server message: " << recievedStringData.toAnsiString() << std::endl;
 	sf::Packet connectionIndexRecvPacket;
 	_mySocket->recieve(connectionIndexRecvPacket);
 	connectionIndexRecvPacket >> _myConnectionIndex;
+	std::cout << "My connection Index: " << _myConnectionIndex << std::endl;
 	sf::Int32 time;
 	connectionIndexRecvPacket >> time;
 	StartTime(std::chrono::system_clock::to_time_t(system_clock::now()) - time);
@@ -207,13 +209,14 @@ void NetworkingManager::SendPlayerAttackData(PlayerAttackData data)
 	}
 }
 
-void NetworkingManager::SendPlayerReviveData(int playerID)
+void NetworkingManager::SendPlayerReviveData(int playerID, sf::Vector2f pos)
 {
 	sf::Packet packet;
 	if (isServer())
 	{
 		packet << "PlayerReviveEvent";
 		packet << sf::Int32(playerID);
+		packet << pos;
 		for (int i = 1; i < GetNumConnections(); i++)
 		{
 			if (i != playerID)
@@ -224,6 +227,7 @@ void NetworkingManager::SendPlayerReviveData(int playerID)
 	{
 		packet << "SyncPlayerReviveEvent";
 		packet << sf::Int32(playerID);
+		packet << pos;
 		_mySocket->send(packet);
 	}
 }

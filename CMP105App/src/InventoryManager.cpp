@@ -39,7 +39,7 @@ Inventory* InventoryManager::getInventory(sf::Vector2i currentMousePos)
 	for (int i = 0; i < inventories.size(); i++)
 	{
 		//Check for collision with mouse
-		if (Collision::checkBoundingBox(inventories[i], currentMousePos))
+		if (Collision::checkBoundingBox(inventories[i], currentMousePos) && inventories[i]->getShowing())
 		{
 			//If so return inventory
 			return inventories[i];

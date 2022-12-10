@@ -52,6 +52,9 @@ void DragController::update(float dt)
 			//If over slot and is can accept current item
 			if (slot != nullptr && slot->isItemCompatable(holdingItem))
 			{
+				Item* temp = nullptr;
+				if (slot->getItem())
+					temp = slot->getItem();
 				//If holdingItem is a weapon
 				if (dynamic_cast<Weapon*>(holdingItem))
 				{
@@ -80,6 +83,8 @@ void DragController::update(float dt)
 				NetworkingManager::SendInventorySyncData(data);
 				//Clear slot item was from
 				beginDragSlot->clearItem();
+				if (temp)
+					beginDragSlot->setItem(temp);
 				beginDragInventory = nullptr;
 				//Clear holding item
 				holdingItem = nullptr;

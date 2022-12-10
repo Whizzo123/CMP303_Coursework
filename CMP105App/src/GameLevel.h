@@ -34,7 +34,7 @@ public:
 	void SyncPlayerAttackedEvent(sf::Packet packet);
 	void HandlePlayerAttackedEvent(PlayerAttackData data);
 	void HandlePlayerDeath(int playerID);
-	void HandlePlayerReviveEvent(int playerID);
+	void HandlePlayerReviveEvent(int playerID, sf::Vector2f pos);
 	void SyncPlayerReviveEvent(sf::Packet packet);
 	void SyncInventoryChangeEvent(sf::Packet packet);
 	void HandleInventoryChangeEvent(InventorySyncData data);

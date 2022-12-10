@@ -74,7 +74,10 @@ void GameLevel::update(float dt)
 		for (auto player : _players)
 		{
 			if (player.first == NetworkingManager::GetMyConnectionIndex() && player.second->isAlive() == false)
+			{
 				HandlePlayerDeath(player.first);
+				std::cout << "Player Death" << std::endl;
+			}
 			map->collisionCheck(player.second);
 			//Update characters and player
 			characterManager->update(dt, map, player.second);
@@ -106,7 +109,10 @@ void GameLevel::handleNetwork(float dt)
 				recievePacket >> functionName;
 				//FUNCTION CALLS
 				if (functionName == "GetPlayerPos")
+				{
+					std::cout << "Server Get Player Pos" << std::endl;
 					NetworkingManager::SendPlayerPosResultPacket(GetPlayerPos(), socketID);
+				}
 				else if (functionName == "SyncNetworkPosition")
 				{
 					if (NetworkingManager::IsCharacterInitialised(socketID))
@@ -132,9 +138,14 @@ void GameLevel::handleNetwork(float dt)
 			}
 			socketID = NetworkingManager::FindReadySockets();
 		}
+		
 		for (int i = 1; i < NetworkingManager::GetNumConnections(); i++)
 		{
-			ServerUpdateEnemyPositions();
+			if (NetworkingManager::IsCharacterInitialised(i))
+			{
+				std::cout << "Updating enemy positions" << std::endl;
+				ServerUpdateEnemyPositions();
+			}
 		}
 	}
 	else
@@ -166,8 +177,10 @@ void GameLevel::handleNetwork(float dt)
 			else if (eventName == "PlayerReviveEvent")
 			{
 				int playerID;
+				sf::Vector2f pos;
 				recvPacket >> playerID;
-				HandlePlayerReviveEvent(playerID);
+				recvPacket >> pos;
+				HandlePlayerReviveEvent(playerID, pos);
 			}
 			else if (eventName == "InventoryChangeEvent")
 			{
@@ -224,8 +237,11 @@ void GameLevel::render()
 void GameLevel::switchToLevel(std::map<int, Player*> players)
 {
 	_players = players;
-	//TODO reset player positions here
-	inventoryManager->addToInventories(_players[NetworkingManager::GetMyConnectionIndex()]->getInventory());
+	for (int i = 0; i < _players.size(); i++)
+	{
+		inventoryManager->addToInventories(_players[i]->getInventory());
+	}
+	//inventoryManager->addToInventories(_players[NetworkingManager::GetMyConnectionIndex()]->getInventory());
 	healthUI = new HealthUI(_players[NetworkingManager::GetMyConnectionIndex()], window, sf::Vector2f(window->getSize().x - 150.0f, window->getSize().y - 40.0f));
 	cursor = new Cursor(window, inventoryManager, input, _players[NetworkingManager::GetMyConnectionIndex()]);
 	background = new Background(window, _players[NetworkingManager::GetMyConnectionIndex()]);
@@ -351,7 +367,6 @@ void GameLevel::ServerUpdateEnemyPositions()
 	// Call client-side function
 	for (int i = 1; i < NetworkingManager::GetNumConnections(); i++)
 	{
-		std::cout << "Sending enemy positions to cliend of ID: " << i << std::endl;
 		NetworkingManager::SendUpdatedNetworkData("ServerUpdateEnemyPositions", data, i);
 	}
 }
@@ -367,9 +382,11 @@ void GameLevel::SyncPlayerAttackedEvent(sf::Packet packet)
 void GameLevel::SyncPlayerReviveEvent(sf::Packet packet)
 {
 	int playerID;
+	sf::Vector2f pos;
 	packet >> playerID;
-	HandlePlayerReviveEvent(playerID);
-	NetworkingManager::SendPlayerReviveData(playerID);
+	packet >> pos;
+	HandlePlayerReviveEvent(playerID, pos);
+	NetworkingManager::SendPlayerReviveData(playerID, pos);
 }
 
 void GameLevel::SyncInventoryChangeEvent(sf::Packet packet)
@@ -472,33 +489,67 @@ Player* GameLevel::GetPlayerFromIndex(int playerID)
 void GameLevel::HandlePlayerAttackedEvent(PlayerAttackData data)
 {
 	_players[data.playerID]->setEnemyTarget(characterManager->getEnemy(data.enemyID));
-	_players[data.playerID]->manualAttack();
+	// Damage is one even with new item in the slot
+	int damage = dynamic_cast<Weapon*>(_players[data.playerID]->getInventory()->getSlot(10)->getItem())->getDamage();
+	_players[data.playerID]->manualAttack(damage);
 }
 
 void GameLevel::HandlePlayerDeath(int playerID)
 {
 	std::cout << "Handling player death" << std::endl;
-	_players[playerID]->resetHealth();
 	sf::Vector2f pos = sf::Vector2f(rand() % 500 + 200, 275);
 	_players[playerID]->setPlayerPosition(pos);
-	NetworkingManager::SendPlayerReviveData(playerID);
+	_players[playerID]->resetHealth();
+	std::cout << "Player Health " << playerID << ": " << _players[playerID]->getCurrentHealth();
+	NetworkingManager::SendPlayerReviveData(playerID, pos);
 }
 
-void GameLevel::HandlePlayerReviveEvent(int playerID)
+void GameLevel::HandlePlayerReviveEvent(int playerID, sf::Vector2f pos)
 {
+	_players[playerID]->setPlayerPosition(pos);
 	_players[playerID]->resetHealth();
+	_players[playerID]->switchAnimToIdle();
 }
 
 void GameLevel::HandleInventoryChangeEvent(InventorySyncData data)
 {
-
 	//Take item from inventory
 	Inventory* inv = inventoryManager->getInventoryFromID(data.invID);
 	Slot* slot = inv->getSlot(data.slotID);
-	Item item = *slot->getItem();
+	Item* item = slot->getItem();
 	//Move item to player slot
 	Inventory* otherInv = inventoryManager->getInventoryFromID(data.otherInvID);
-	std::cout << "HandleInventoryChangeEvent for passing to inventory: " << data.otherInvID << std::endl;
-	otherInv->addToSlot(data.otherInvSlotID, &item);
-	slot->clearItem();
+	if (otherInv->getSlot(data.otherInvSlotID)->getItem() != nullptr)
+	{
+		Item* temp = otherInv->getSlot(data.otherInvSlotID)->getItem();
+		if (dynamic_cast<Weapon*>(item))
+			otherInv->addToSlot(data.otherInvSlotID, new Weapon(*(dynamic_cast<Weapon*>(item))));
+		//If holding item is a potion
+		if (dynamic_cast<Potion*>(item))
+			otherInv->addToSlot(data.otherInvSlotID, new Potion(*(dynamic_cast<Potion*>(item))));
+		//If holdingItem is a piece of armour
+		if (dynamic_cast<Armour*>(item))
+			otherInv->addToSlot(data.otherInvSlotID, new Armour(*(dynamic_cast<Armour*>(item))));
+
+		if (dynamic_cast<Weapon*>(temp))
+			inv->addToSlot(data.slotID, new Weapon(*(dynamic_cast<Weapon*>(temp))));
+		//If holding item is a potion
+		if (dynamic_cast<Potion*>(temp))
+			inv->addToSlot(data.slotID, new Potion(*(dynamic_cast<Potion*>(temp))));
+		//If holdingItem is a piece of armour
+		if (dynamic_cast<Armour*>(temp))
+			inv->addToSlot(data.slotID, new Armour(*(dynamic_cast<Armour*>(temp))));
+	}
+	else
+	{
+		if (dynamic_cast<Weapon*>(item))
+			otherInv->addToSlot(data.otherInvSlotID, new Weapon(*(dynamic_cast<Weapon*>(item))));
+		//If holding item is a potion
+		if (dynamic_cast<Potion*>(item))
+			otherInv->addToSlot(data.otherInvSlotID, new Potion(*(dynamic_cast<Potion*>(item))));
+		//If holdingItem is a piece of armour
+		if (dynamic_cast<Armour*>(item))
+			otherInv->addToSlot(data.otherInvSlotID, new Armour(*(dynamic_cast<Armour*>(item))));
+		slot->clearItem();
+	}
 }

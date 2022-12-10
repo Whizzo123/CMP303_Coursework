@@ -102,7 +102,7 @@ public:
 	static void SendUpdatedNetworkData(std::vector<NetworkObject> networkObjects);
 	static void SendUpdatedNetworkData(std::string eventCall, NetworkObjectUpdateData data, int socketID = -1);
 	static void SendPlayerAttackData(PlayerAttackData data);
-	static void SendPlayerReviveData(int playerID);
+	static void SendPlayerReviveData(int playerID, sf::Vector2f pos);
 	static void SendInventorySyncData(InventorySyncData data);
 	static void SendChestSpawnInfoResult(ChestSpawnInfoResult result, int socketID);
 	static void SendNextLevelMessage();

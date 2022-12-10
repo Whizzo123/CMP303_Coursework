@@ -173,12 +173,14 @@ int main()
 				levels[currentLevelIndex]->setNextLevel(2);
 				//Spawn players
 				NetworkingManager::SendFunctionCall("GetPlayerPos");
+				NetworkingManager::SetToBlock(true);
 				sf::Packet* packet = NetworkingManager::RecievePacketOnSocket();
 				sf::Packet posResultPacket = *packet;
 				PlayerPosResult results;
 				std::string discardFuncCall;
 				posResultPacket >> discardFuncCall;
 				posResultPacket >> results;
+				std::cout << "Recieved" << std::endl;
 				for (int i = 0; i < results.resultPositions.size(); i++)
 				{
 					sf::Vector2f spawnPos = results.resultPositions[i];
@@ -197,6 +199,7 @@ int main()
 				}
 				NetworkingManager::SetToBlock(false);
 				mNetworkStarted = true;
+				NetworkingManager::SetToBlock(false);
 			}
 			else if (static_cast<MainMenu*>(levels[currentLevelIndex])->isStartServer() == true)
 			{

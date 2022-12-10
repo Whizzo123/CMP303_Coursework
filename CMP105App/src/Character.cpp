@@ -19,7 +19,7 @@ Character::Character(std::string textureName, sf::Vector2f pos, sf::Vector2f siz
 	this->maxHealth = maxHealth;
 	currentHealth = maxHealth;
 	this->audio = audio;
-	alive = false;
+	alive = true;
 	dead = false;
 	showingStatsIndicator = false;
 	statShowingTimer = 0.5f;
@@ -87,7 +87,9 @@ void Character::updateAnimations(float dt)
 	{
 		//Remove character
 		onDeath();
-		alive = false;
+		setAlive(false);
+		currentAnimation = &idleAnimation;
+		dead = false;
 	}
 	//If playing damage animation and has finished
 	if (currentAnimation == &damageAnimation && currentAnimation->getPlaying() == false)
@@ -224,6 +226,6 @@ float Character::getMaxHealth()
 void Character::resetHealth()
 {
 	currentHealth = maxHealth;
-	alive = true;
+	setAlive(true);
 	dead = false;
 }
