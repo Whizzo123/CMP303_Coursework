@@ -125,8 +125,6 @@ void Player::update(float dt)
 {	
 	Character::update(dt);
 	updateAnimations(dt);
-	//if (currentHealth <= 0)
-		//setAlive(false);
 	//If walking and not playing walk sound
 	if (moving && audio->getSound("DwarfWalk")->getStatus() == sf::Sound::Status::Stopped)
 	{
@@ -239,8 +237,7 @@ sf::FloatRect* Player::getInteractRect()
 
 void Player::onDeath()
 {
-	//debugLog("Player Dead");
-	//*nextLevel = 8;
+	
 }
 
 ChestManager* Player::getChestManager()
@@ -309,22 +306,11 @@ void Player::updateVelocity(sf::Vector2f newVelocity, float time)
 void Player::calculateNewVelocity()
 {
 	float currentTime = NetworkingManager::GetCurrentTime();
-	for (int i = 0; i < 2; i++)
-	{
-		//std::cout << "LastPosition " << i << ": " << lastPositions[i]->position.x << "," << lastPositions[i]->position.y << std::endl;
-	}
 	// Calculate average distance
 	float averageDistanceX = (lastPositions[1]->position.x - lastPositions[0]->position.x);
-	//std::cout << "AverageDistance X: " << averageDistanceX << std::endl;
 	float averageDistanceY = (lastPositions[1]->position.y - lastPositions[0]->position.y);
-	//std::cout << "AverageDistance Y: " << averageDistanceY << std::endl;
 	// Calculate average time
 	float averageTime = (lastPositions[1]->timeOfRecording - lastPositions[0]->timeOfRecording);
-	for (int i = 0; i < 2; i++)
-	{
-		//std::cout << "Last Position " << i << " time: " << lastPositions[i]->timeOfRecording << std::endl;
-	}
-	//std::cout << "AverageTime: " << averageTime << std::endl;
 	if (averageTime != 0)
 	{
 		// Calculate speed
@@ -336,17 +322,12 @@ void Player::calculateNewVelocity()
 			speedY = averageDistanceY / averageTime;
 		// Calculate displacement
 		float displacementX = speedX * (currentTime - lastPositions[1]->timeOfRecording);
-		//std::cout << "Displacement X: " << displacementX << std::endl;
 		float displacementY = speedY * (currentTime - lastPositions[1]->timeOfRecording);
-		//std::cout << "Displacement Y: " << displacementY << std::endl;
 		// Calculate new position
 		if (displacementX != 0 || displacementY != 0)
 		{
 			sf::Vector2f newPosition(getPosition().x + displacementX, getPosition().y + displacementY);
 			velocity = normalize(newPosition - getPosition());
-			//std::cout << "New Position: " << newPosition.x << ", " << newPosition.y << std::endl;
-			//std::cout << "Current Position: " << getPosition().x << ", " << getPosition().y << std::endl;
-			//std::cout << "New Velocity " << velocity.x << "," << velocity.y << std::endl;
 		}
 		else
 			velocity = sf::Vector2f(0.0f, 0.0f);

@@ -110,7 +110,6 @@ void GameLevel::handleNetwork(float dt)
 				//FUNCTION CALLS
 				if (functionName == "GetPlayerPos")
 				{
-					std::cout << "Server Get Player Pos" << std::endl;
 					NetworkingManager::SendPlayerPosResultPacket(GetPlayerPos(), socketID);
 				}
 				else if (functionName == "SyncNetworkPosition")
@@ -143,7 +142,6 @@ void GameLevel::handleNetwork(float dt)
 		{
 			if (NetworkingManager::IsCharacterInitialised(i))
 			{
-				std::cout << "Updating enemy positions" << std::endl;
 				ServerUpdateEnemyPositions();
 			}
 		}
@@ -200,7 +198,6 @@ void GameLevel::handleNetwork(float dt)
 		// Send any changed data
 		if (characterManager->getCurrentCharacterCount() > 0)
 		{
-			//TODO add enemy movement syncing
 			PacketUpdatedNetworkObjectData();
 		}
 	}
@@ -214,7 +211,6 @@ void GameLevel::render()
 	chestManager->draw(window);
 	window->draw(*dungeonExit);
 	characterManager->draw(window);
-	//player.second->drawDebugInfo();
 	for (auto networkPlayer : _players)
 	{
 		if (networkPlayer.second->isAlive())
@@ -241,7 +237,6 @@ void GameLevel::switchToLevel(std::map<int, Player*> players)
 	{
 		inventoryManager->addToInventories(_players[i]->getInventory());
 	}
-	//inventoryManager->addToInventories(_players[NetworkingManager::GetMyConnectionIndex()]->getInventory());
 	healthUI = new HealthUI(_players[NetworkingManager::GetMyConnectionIndex()], window, sf::Vector2f(window->getSize().x - 150.0f, window->getSize().y - 40.0f));
 	cursor = new Cursor(window, inventoryManager, input, _players[NetworkingManager::GetMyConnectionIndex()]);
 	background = new Background(window, _players[NetworkingManager::GetMyConnectionIndex()]);
@@ -286,7 +281,6 @@ void GameLevel::SyncNetworkPosition(sf::Packet packet)
 	for (int i = 0; i < updatedObjects.playerLength; i++)
 	{
 		sf::Vector2f pos = updatedObjects.playerPosSyncVars[i].newPosition;
-		//_players[updatedObjects.playerPosSyncVars[i].objectID]->setPosition(pos);
 		_players[updatedObjects.playerPosSyncVars[i].objectID]->updateVelocity(pos, NetworkingManager::GetCurrentTime());
 	}
 	for (int i = 1; i < NetworkingManager::GetNumConnections(); i++)
@@ -305,7 +299,6 @@ void GameLevel::GetEnemyInfoForClient(int socketID)
 	for (int i = 0; i < length; i++)
 	{
 		EnemyInfo info;
-		// TODO switch out this connectionIndex for something else
 		info.objectID = i;
 		info.enemyClass = enemies[i]->getEnemyType();
 		info.spawnPosition = enemies[i]->getPosition();
@@ -418,7 +411,6 @@ void GameLevel::PacketUpdatedNetworkObjectData()
 	NetworkingManager::SendUpdatedNetworkData(GetUpdatedNetworkObjects());
 }
 
-//TODO this won't work players are no longer network objects 
 std::vector<NetworkObject> GameLevel::GetUpdatedNetworkObjects()
 {
 	std::vector<NetworkObject> changedObjects;

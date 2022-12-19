@@ -146,7 +146,6 @@ void NetworkingManager::SendFunctionCall(std::string funcCallName, int socketID)
 		_connections[socketID]->getConnectionSocket()->send(packet);
 	}
 }
-// TODO make this one thing or something like that
 void NetworkingManager::SendUpdatedNetworkData(std::vector<NetworkObject> networkObjects)
 {
 	NetworkObjectUpdateData updateData;
